@@ -1,0 +1,69 @@
+---
+---
+// Default mixins and settings -----------------
+@import "mixins";
+@import "settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+@import url(/reveal.js/lib/font/source-sans-pro/source-sans-pro.css);
+
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: #fff;
+$themeColor: darkred;
+
+$mainColor: #222;
+$headingColor: $backgroundColor;
+$headingBackgroundColor: $themeColor;
+
+$mainFontSize: 35px;
+$mainFont: 'Source Sans Pro', Helvetica, sans-serif;
+$headingFont: 'Source Sans Pro', Helvetica, sans-serif;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: none;
+$headingFontWeight: 600;
+$linkColor: #2a76dd;
+$linkColorHover: lighten( $linkColor, 15% );
+$selectionBackgroundColor: lighten( $linkColor, 25% );
+
+$heading1Size: 2.0em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+
+section.has-dark-background {
+	&, h1, h2, h3, h4, h5, h6 {
+		color: #fff;
+	}
+}
+
+
+// Theme template ------------------------------
+@import "theme";
+// ---------------------------------------------
+
+// Title page
+
+.titlepage > div.title,
+.titlepage > div.subtitle {
+    color: $backgroundColor;
+    background-color: $headingBackgroundColor;
+}
+
+.titlepage > div.title {
+    font-size: 2.3em;
+}
+
+.titlepage > div.subtitle {
+    font-size: 1.5em;
+    margin-top: 1em;
+}
+
+.titlepage > div.author,
+.titlepage > div.institution,
+.titlepage > div.meeting {
+    margin-top: 1em;
+}
