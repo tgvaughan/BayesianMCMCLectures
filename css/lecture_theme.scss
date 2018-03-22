@@ -13,6 +13,7 @@
 // Override theme settings (see ../template/settings.scss)
 $backgroundColor: #fff;
 $themeColor: darkred;
+$citeColor: darkblue;
 
 $mainColor: #222;
 $headingColor: $backgroundColor;
@@ -29,9 +30,9 @@ $linkColor: #2a76dd;
 $linkColorHover: lighten( $linkColor, 15% );
 $selectionBackgroundColor: lighten( $linkColor, 25% );
 
-$heading1Size: 2.0em;
-$heading2Size: 1.6em;
-$heading3Size: 1.3em;
+$heading1Size: 1.6em;
+$heading2Size: 1.3em;
+$heading3Size: 1.0em;
 $heading4Size: 1.0em;
 
 section.has-dark-background {
@@ -65,5 +66,29 @@ section.has-dark-background {
 .titlepage > div.author,
 .titlepage > div.institution,
 .titlepage > div.meeting {
+    margin-top: 1em;
+}
+
+// Regular slides
+
+p {
+    text-align: left;
+}
+
+.reveal section img {
+    border: none;
+    box-shadow: none;
+}
+
+div.figure img {
+    margin-bottom: 0px;
+}
+
+div.figure > .cite {
+    color: $citeColor;
+    font-size: 0.8em;
+}
+
+.spaced > li:not(:first-child) {
     margin-top: 1em;
 }

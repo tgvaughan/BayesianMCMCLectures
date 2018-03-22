@@ -5,21 +5,131 @@ layout: lecture
 ---
 
 <section>
-  <h1>Bayesian inference</h1>
+  <section class="center">
+    <h1>Introduction</h1>
+  </section>
+  
+  <section>
+    <h2>Bayesian inference</h2>
+
+    <ul>
+      <li>Bayesian inference is enabled by the Bayesian interpretation of probabilities:
+        <ul>
+          <li>Probabilities are just as applicable to hypotheses as they are to data.</li>
+          <li>Inference of models and/or model parameters can be conducted using the standard calculus of probabilities (sum rule, product rule, etc).</li>
+      </ul></li>
+      <li>In contrast, sampling theory approaches assign probabilities only to data:
+        <ul>
+          <li>Inference of models and/or parameters is a distinct procedure.
+        </ul>
+      </li>
+  </section>
+
+  <section>
+    <h2>The Problem</h2>
+
+    <p>Suppose we have a vector $\vec{d}$ representing some collected data.  Assuming a model $M$, what do the data tell us about the parameters $\vec{\theta}_M$ of this model?</p>
+
+    <p>The Bayesian solution is simple to derive and tremendously intuitive:</p>
+
+    $$P(\vec{\theta}_M|\vec{d},M) = \frac{P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M)}{P(\vec{d}|M)}$$
+
+    <p>For models with large parameter space volumes,
+    actually <i>evaluating</i> this probability for a particular
+    $\vec{\theta}_M$ is HARD.</p>
+
+    $$P(\vec{d}|M)=\sum_{\vec{\theta}_M} P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
+  </section>
+
+  <section>
+    <h2>The Problem (Continued)</h2>
+
+    <div class="figure">
+    <img data-src="ship_lake.svg" style="width:80%">
+    <div class="cite" style="text-align:right">Idea due to MacKay, 2003</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>A practical example from phylogenetics</h2>
+
+    <p>The posterior probability for a particular time tree $T$ given a multiple sequence alignment $A$ and a neutral substitution model and a coalescent prior on tree space is</p>
+    $$P(T,\mu,\theta|A) = \frac{P(A|T,\mu)P(T|\theta)P(\mu,\theta)}{P(A)}$$
+    <p>where $\mu$ and $\theta$ are substitution model and tree prior parameters.</p>
+
+    <p>How difficult is it to compute the denominator?</p>
+    $$P(A)=\sum_{T,\mu,\theta}P(A|T,\mu)P(T|\theta)P(\mu,\theta)$$
+  </section>
+
+  <section>
+    <h2>How big is tree space?</h2>
+
+    <p>The number $N$ of distinct labelled rooted tree topologies
+      grows rapidly with the number $m$ of leaves
+      (i.e. sequences in our problem):</p>
+
+    $$N_m = \frac{(2m-3)!}{2^{m-2}(m-2)!}$$
+
+    <div id="treecount" class="figure">
+      <script src="plot_treecount.js"></script>
+    </div>
+  </section>
+
+  <section>
+    <h2>Computational solutions to the normalization problem</h2>
+
+    <ol class="spaced">
+      <li>Use <b>brute-force enumeration</b> all possible states.
+        <ul><li>Only computationally feasible for relatively small problems.</li></ul>
+      </li>
+      <li>Use a <b>variational approach</b> (AKA "variational Bayes")
+        <ul><li>Requires a parametric ansatz for the posterior.  Not always easy to find, particularly in "interesting" state spaces such as tree space.</li></ul>
+        </li>
+    </ol>
+
+  </section>
+
 </section>
 
+<section>
+  <section class="center">
+    <h1>The MCMC Algorithm</h1>
+  </section>
+
+  <section>
+    <h2>Monte Carlo Techniques</h2>
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h1>Reversible Jump MCMC</h1>
+  </section>
+</section>
+
+<section>
+  <section class="center">
+    <h1>Model Selection</h1>
+  </section>
+</section>
+
+
 <!--
+
+*** Introduction
     
 1. Bayesian inference
 
 2. The problem:
 Trade-off: conceptual clarity vs mathematical difficulty
 
-2. Numerical techniques: direct integration, variational Bayes
+2. Deterministic numerical techniques: direct integration, variational Bayes
+
+*** Basic algorithm
 
 3. Monte carlo techniques
   - Importance sampling
-  - particle filtering
+  - ABC
   - Gibbs samplers
   - MH
 
@@ -39,9 +149,19 @@ Trade-off: conceptual clarity vs mathematical difficulty
 
 11. Correlated variables and mixing issues
 
+*** Reversible jump MCMC
+
+The difficulty
+
+The solution
+
+Confusion abounds!
+
+*** Model selection via thermodynamic integration
+
 -->
 
-<!-- Topics to include:
+<!-- Topics still to include:
 
 Model slection
 
