@@ -79,10 +79,12 @@ layout: lecture
     <h2>Computational solutions to the normalization problem</h2>
 
     <ol class="spaced">
-      <li>Use <b>brute-force enumeration</b> all possible states.
+      <li>Use <b>brute-force enumeration</b> all possible states:
+        $$\sum_{\vec{\theta}_M}P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
         <ul><li>Only computationally feasible for relatively small problems.</li></ul>
       </li>
-      <li>Use a <b>variational approach</b> (AKA "variational Bayes")
+      <li>Use a <b>variational approach</b> (AKA "variational Bayes"):<br>
+        find $Q(\vec{\theta}_M)$ minimizing $\sum_{\vec{\theta}_M}Q(\vec{\theta}_M)\log\frac{Q(\vec{\theta}_M)}{P(\vec{\theta}_M|\vec{d},M)}$.
         <ul><li>Requires a parametric ansatz for the posterior.  Not always easy to find, particularly in "interesting" state spaces such as tree space.</li></ul>
         </li>
     </ol>
@@ -97,8 +99,84 @@ layout: lecture
   </section>
 
   <section>
-    <h2>Monte Carlo Techniques</h2>
+    <h2>Monte Carlo Methods</h2>
+
+    <ul>
+      <li>Broad class of methods which use stochastic algorithms to mathematical problems.</li>
+      <li>A large sub-class of these methods are targeted at the numerical solution of analytically intractable integrals:
+        \begin{align}
+        I &= \int_{\vec{x}\in\mathcal{V}} f(\vec{x})p(\vec{x})\\
+          &= E_p[f(\vec{x})]
+        \end{align}</li>
+      <li>By the law of large numbers:
+        $$I = \lim_{N\rightarrow\infty} \frac{1}{N}\sum_{i=1}^N f(\vec{x}^{(i)})$$
+        where $\vec{x}^{(i)}$ are draws from the distribution $p(\vec{x})$.</li>
+    </ul>
   </section>
+
+  <section>
+    <h2>Monte Carlo Methods (Continued)</h2>
+
+    <div class="figure" style="display:inline-block;width:50%">
+      <img data-src="Pi_30K_slow.gif" style="width:100%">
+      <div class="cite" style="text-align:right">Wikipedia</div>
+    </div>
+    <p>Here $\mathcal{V}=[0,1]^2$, $p(\vec{x})=1$ and $f(\vec{x})=I(|\vec{x}|^2<1)$.</p>
+  </section>
+
+  <section>
+    <h2>Importance Sampling</h2>
+
+    <ul>
+      <li>What happens if we can't sample directly from $p(\vec{x})$?</li>
+      <li>Solution: suppose we have a function $Q(\vec{x})$ also defined on $\mathcal{V}$ from which we can easily generate samples:
+        <div class="figure" style="text-align:center">
+          <img data-src="importance_sampling.svg" style="width:40%">
+      </div></li>
+      <li>We can then use
+        $$I=\int_{\vec{x}\in\mathcal{V}}f(\vec{x})\frac{p(\vec{x})}{q(\vec{x})}q(\vec{x}) = E_q\left[f(\vec{x})\frac{p(\vec{x})}{q(\vec{x})}\right]$$</li>
+
+      <li style="margin-top:1.0em">The factor $p(\vec{x}^{(i)})/q(\vec{x}^{(i)})$ is the <b>weight</b> of sample $\vec{x}^{(i)}$.
+    </ul>
+  </section>
+
+  <section>
+    <h2>Importance Sampling in a Bayesian context</h2>
+
+    <ul>
+      <li>Importance sampling is a very general and useful idea with many applications in Bayesian statistics.</li>
+      <li>A very na&iuml;ve application would be the computation of the normalization factor in Bayes theorem:
+        $$P(\vec{d}|M)=\lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}P(\vec{d}|\vec{\theta}_M^{(i)})$$
+        where $\vec{\theta}_M^{(i)}\sim P(\vec{\theta}_M|M)$.</li>
+      <li>Similarly, one could compute expectations of parameters under the posterior.</li>
+      <li>Note that the equation above still holds if unbiased noise is added to the likelihood.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Approximate Bayesian Computation</h2>
+
+    <ul>
+      <li>Suppose we can't even evaluate the likelihood $P(\vec{d}|\vec{\theta}_M,M)$. What then?</li>
+      <li>An example from population genetics might be the probability of a sequence alignment $A$ given some population parameters $\phi=(N(t), \rho, \ldots)$. This probability $P(A|\phi)$ is difficult to compute as it requires summing over a large number of latent variables (including the sampled phylogenetic tree/network).</li>
+      <li>ABC: Replace the likelihood with a <b>cost function</b> depending
+      on the difference between summary statistics evaluated on data
+      $\vec{d}_s$ simulated under the $M$ from parameters
+      $\vec{\theta}_M$ and the same summaries evaluate using the observed
+      data $\vec{d}$.</li>
+
+      <li>While this method seems quite sloppy, there are systematic ways of applying it.</li>
+      </ul>
+  </section>
+  
+  <section>
+    <h2>Markov chain Monte Carlo methods</h2>
+
+    <ul>
+    </ul>
+    
+  </section>
+  
 </section>
 
 <section>
@@ -130,8 +208,6 @@ Trade-off: conceptual clarity vs mathematical difficulty
 3. Monte carlo techniques
   - Importance sampling
   - ABC
-  - Gibbs samplers
-  - MH
 
 4. The Gibbs Sampler
 
@@ -162,10 +238,6 @@ Confusion abounds!
 -->
 
 <!-- Topics still to include:
-
-Model slection
-
-Reversible jump
 
 PMMH
 
