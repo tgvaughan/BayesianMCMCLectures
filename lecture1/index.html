@@ -375,15 +375,37 @@ layout: lecture
     <p>The usual approach is to decompose the proposal function $q(\vec{x}'|\vec{x})$ in terms of a large number of simpler proposals:
       $$q(\vec{x}'|\vec{x})=\sum_j w_j q_j(\vec{x}'|\vec{x})$$</p>
 
+    <ul>
+      <li>Individual proposal functions $q_j(\vec{x}'|\vec{x})$ are
+      sometimes called "operators", and the $w_j$ are called
+      "weights".</li>
+      <li>Individual operators are often constructed to be reversible:
+      i.e. maintain detailed balance.</li>
+      <li>However, individual operators are usually incapable of
+      producing an ergodic chain on their own. (I.e. they may not be
+      capable of exploring the entire support of the posterior.)</li>
+    </ul>
+
   </section>
 
   <section>
     <h2>Example</h2>
 
     <div>
-    <div id="targetDensity2d" style="margin:auto;width:70%"></div>
+    <div id="targetDensity2d" style="margin:auto;width:70%;margin-bottom:0"></div>
     </div>
     <script src="plot_2dExamples.js"></script>
+
+    <p style="margin-top:0em">These proposal operators are sufficient for ergodicity:</p>
+      $q_1(\vec{x'}|\vec{x})=\delta(x_2'-x_2)g(x_1'|x_1)$, 
+      $q_2(\vec{x'}|\vec{x})=\delta(x_1'-x_1)g(x_2'|x_2)$
+    <p>where $g(x'|x)$ is the PDF for $\text{Unif}(x-w/2,x+w/2)$</p>
+  </section>
+
+  <section>
+    <h2>Example (continued)</h2>
+
+    <div id="mcmcTrace2dFirstTry" style="margin:auto;width:80%"></div>
   </section>
 
   <section>
