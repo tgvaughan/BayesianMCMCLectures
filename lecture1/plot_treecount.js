@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    var target = document.getElementById("treecount");
-    
     var data = {x: [], y: [], showlegend: false};
     var acc = 0;
     for (var m=3; m<=100; m+=1) {

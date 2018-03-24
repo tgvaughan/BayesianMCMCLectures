@@ -165,7 +165,7 @@ layout: lecture
       $\vec{\theta}_M$ and the same summaries evaluate using the observed
       data $\vec{d}$.</li>
 
-      <li>While this method seems quite sloppy, there are systematic ways of applying it.</li>
+      <li>While this method seems less than rigorous, there are systematic ways of applying it.</li>
       </ul>
   </section>
   
@@ -173,21 +173,230 @@ layout: lecture
     <h2>Markov chain Monte Carlo methods</h2>
 
     <ul>
+      <li>Until now we have assumed each sample $\vec{x}^{(i)}$ is statistically independent.</li>
+      <li>Markov chain Monte Carlo methods instead produce a sequence
+        of correlated samples
+        $\vec{x}^{(1)}, \vec{x}^{(2)},\ldots,\vec{x}^{(N)}$,
+        where each element is drawn from a distribution depending only
+      on the previous element:
+        $$\vec{x}^{(i+1)} \sim Q(\vec{x}'|\vec{x}^{(i)})$$</li>
+      <li>Allows samples to adapt to shape of distribution:
+        <div class="figure" style="text-align:center">
+          <img data-src="markov_chain.svg" style="width:50%">
+        </div>
+      </li>
     </ul>
+  </section>
+
+  <section>
+    <h2>The Gibbs sampler</h2>
+
+    <ul>
+      <li>To be useful, the Markov chain must be ergodic in the following sense:
+        $$\lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}f(\vec{x}^{(i)})=\int_{\vec{x}\in\mathcal{V}} f(\vec{x})p(\vec{x})$$</li>
+      <li>That is, the stationary distribution of the chain must match $p(\vec{x})$. Thus, the transition probabilities must be chosen so that they do not perturb the stationary distribution.</li>
+      <li>One way to achieve this is to use a sequence of transition functions which sample individual elements of the state vector from the conditional distributions $p(x_k|\vec{x}_{-k})$.</li>
+      <li>This is possible only when these conditional probabilities are known.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Metropolis-Hastings sampling</h2>
+
+    <ul>
+      <li>Suppose instead that we have the following transition probability:
+        $$Q(\vec{x}'|\vec{x})=\alpha(\vec{x}',\vec{x})q(\vec{x}'|\vec{x}) + \delta(\vec{x}'-\vec{x})(1-\int_{\vec{y}\in\mathcal{V}}\alpha(\vec{y},\vec{x})q(\vec{y}|\vec{x}))$$
+      </li>
+      <li>Here $q(\vec{x}'|\vec{x})$ is an arbitrary transition probability distribution (as long as ergodicity is satisfiable) and $\alpha(\vec{x}',\vec{x})$ is the <i>acceptance probability</i>.</li>
+      <li>Assuming that the stationary distribution of the chain satisfies detailed balance allows us to write
+        $$p(\vec{x})Q(\vec{x}'|\vec{x}) = p(\vec{x}')Q(\vec{x}|\vec{x}')$$</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Metropolis-Hastings sampling (continued)</h2>
+    <ul>
+      <li>From this it is straight-forward to identify the following solution for $\alpha$:
+
+        $$\alpha(\vec{x}',\vec{x})=1\wedge\frac{p(\vec{x}')}{p(\vec{x})}\cdot\frac{q(\vec{x}|\vec{x}')}{q(\vec{x}'|\vec{x})}$$
+      </li>
+      <li>The ratio $q(\vec{x}|\vec{x}')/q(\vec{x}'|\vec{x})$ is known
+        as the Hastings ratio, and accounts for asymmetry in the
+        proposal distribution.</li>
+      <li>This isn't the only possibility for $\alpha$:
+        <ul>
+          <li>It's possible to find Markov chains with the
+          transition probability given that have $p(\vec{x})$ as a
+          stationary distribution but which violate detailed
+          balance.</li>
+          <li>It's also possible to find $\alpha$ such that both
+          $\alpha(\vec{x}',\vec{x})$ and $\alpha(\vec{x},\vec{x}')$ are
+          $<1$: although this would be silly. (Why?)</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The MH algorithm</h2>
+
+    The complete (yet simple!) MH algorithm is as follows:
+
+    <blockquote>
+
+      <ol class="spaced">
+        <li>Set $\vec{x}$ to an arbitrary initial state.</li>
+        <li>Sample $\vec{x}'$ from a proposal distribution $q(\vec{x'}|\vec{x})$</li>
+        <li>Evaluate the acceptance probability $\alpha(\vec{x}',\vec{x})$</li>
+        <li>Sample $u\sim\text{Unif}(0,1)$.</li>
+        <li>If $u&lt;\alpha(\vec{x}',\vec{x})$ then set $\vec{x}'\leftarrow\vec{x}$.</li>
+        <li>Log $\vec{x}$ to file.</li>
+        <li>Go to 2 (until the heat death of the universe).</li>
+      </ol>
+    </blockquote>
     
   </section>
-  
+
 </section>
+<section>
+  <section class="center">
+    <h1>MCMC in practice</h1>
+  </section>
+
+  <section>
+    <h2>Implementation example</h2>
+
+    <p>Suppose we want to sample from the following posterior for a single variable $x$:</p>
+
+    <div id="targetDensity"> </div>
+
+    <p>Use a simple proposal distribution:</p>
+    $$q_w(x'|x) = \begin{cases}
+    1/w & x-\frac{w}{2} &lt; x' &lt; x+\frac{w}{2}\\
+    0 & \text{otherwise}
+    \end{cases}$$
+  </section>
+
+  <section>
+    <h2>Implementation example</h2>
+
+    <div id="mcmcTrace" style="width:100%"> </div>
+  </section>
+  
+  <section>
+    <h2>Implementation example</h2>
+
+    <div style="font-size:0.5em;text-align:left">$w=1$:</div>
+    <div>
+      <div style="display:inline-block;width:70%" id="mcmcTrace_w1"></div>
+      <div style="display:inline-block;width:20%" id="mcmcDensity_w1"></div>
+    </div>
+
+    <div class="fragment">
+    <div style="font-size:0.5em;text-align:left">$w=3$:</div>
+    <div>
+      <div style="display:inline-block;width:70%" id="mcmcTrace_w2"></div>
+      <div style="display:inline-block;width:20%" id="mcmcDensity_w2"></div>
+    </div>
+    </div>
+
+    <div class="fragment">
+    <div style="font-size:0.5em;text-align:left">$w=5$:</div>
+    <div>
+      <div style="display:inline-block;width:70%" id="mcmcTrace_w3"></div>
+      <div style="display:inline-block;width:20%" id="mcmcDensity_w3"></div>
+    </div>
+    </div>
+    <script src="plot_mcmcExamples.js"> </script>
+  </section>
+
+  <section>
+    <h2>How do we assess convergence?</h2>
+
+    <ul>
+      <li>The easiest approach is simply to run multiple independent chains, each
+        initialized from a unique starting point.</li>
+      <li>Comparing the resulting histograms (with any of a variety of methods,
+        e.g. q-q plots) is a great practical test.</li>
+      <li>Additionally, once convergence is attained, combining the results of
+        multiple chains is perfectly acceptable.</li>
+      </ul>
+  </section>
+
+  <section>
+    <h2>How do we assess mixing?</h2>
+  </section>
+
+  <section>
+    <h2>Multivariate target distributions</h2>
+  </section>
+
+  <section>
+    <h2>Complex proposals</h2>
+  </section>
+
+  <section>
+    <h2>Example</h2>
+  </section>
+
+  <section>
+    <h2>A proposal for correlated variables</h2>
+  </section>
+
+  <section>
+    <h2>Mixing improvement with new operator</h2>
+  </section>
+
+  <section>
+    <h2>Alternative approach: Hamiltonian Monte Carlo</h2>
+  </section>
+
+</section>
+
+
 
 <section>
   <section class="center">
     <h1>Reversible Jump MCMC</h1>
   </section>
+
+  <section>
+    <h2>The Problem</h2>
+  </section>
+
+  <section>
+    <h2>The Solution</h2>
+  </section>
+
+  <section>
+    <h2>Confusion abounds?</h2>
+  </section>
 </section>
+
 
 <section>
   <section class="center">
     <h1>Model Selection</h1>
+  </section>
+
+  <section>
+    <h2>The Marginal Likelihood</h2>
+  </section>
+
+  <section>
+    <h2>The Harmonic Mean Estimator</h2>
+    </section>
+
+  <section>
+    <h2>Thermodynamic Integration</h2>
+  </section>
+
+  <section>
+    <h2>Annealing-Melting Integration</h2>
+  </section>
+
+  <section>
+    <h2>Model-switch Integration</h2>
   </section>
 </section>
 
@@ -216,8 +425,6 @@ Trade-off: conceptual clarity vs mathematical difficulty
 6. Single-variable MH implementation example
 
 7. Convergence and mixing
-
-8. Interpreting output
 
 9. Multiple dimensions and complex proposals
 
