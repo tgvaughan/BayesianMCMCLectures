@@ -6,11 +6,11 @@ $(document).ready(function() {
         return(0.2*Math.exp(logDensity1) + 0.8*Math.exp(logDensity2));
     }
 
-    var truth = {x: [], y: [], showlegend: false};
+    var truth = {x: [], y: [], showlegend: false, name: "truth"};
     var acc = 0;
     for (var x=-10; x<=10; x+=0.1) {
         truth.x.push(x);
-        truth.y.push(Math.exp(targetDensity(x)));
+        truth.y.push(targetDensity(x));
     }
 
     var layout =  {
@@ -70,7 +70,7 @@ $(document).ready(function() {
                                            yaxis: {title: "x"}},
                 {displayModeBar: false});
     
-    var N = 10000;
+    var N = 5000;
     var mcmcTrace1 = doMCMC(targetDensity, 1, N, -10);
     var mcmcTrace2 = doMCMC(targetDensity, 3, N, -10);
     var mcmcTrace3 = doMCMC(targetDensity, 5, N, -10);
@@ -93,7 +93,7 @@ $(document).ready(function() {
 
     function getHistogram(mcmcTrace) {
         return {x: mcmcTrace.y,
-                type: 'histogram'};
+                type: 'histogram', histnorm: 'probability density'}
     }
 
     var densityLayout =  {
@@ -106,11 +106,12 @@ $(document).ready(function() {
         yaxis: {
             title: ""
         },
+        showlegend: false
     };
 
 
-    Plotly.plot("mcmcDensity_w1", [getHistogram(mcmcTrace1)], densityLayout, {displayModeBar: false});
-    Plotly.plot("mcmcDensity_w2", [getHistogram(mcmcTrace2)], densityLayout, {displayModeBar: false});
-    Plotly.plot("mcmcDensity_w3", [getHistogram(mcmcTrace3)], densityLayout, {displayModeBar: false});
+    Plotly.plot("mcmcDensity_w1", [getHistogram(mcmcTrace1), truth], densityLayout, {displayModeBar: false});
+    Plotly.plot("mcmcDensity_w2", [getHistogram(mcmcTrace2), truth], densityLayout, {displayModeBar: false});
+    Plotly.plot("mcmcDensity_w3", [getHistogram(mcmcTrace3), truth], densityLayout, {displayModeBar: false});
     
 });

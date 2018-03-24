@@ -358,14 +358,32 @@ layout: lecture
 
   <section>
     <h2>Multivariate target distributions</h2>
+
+    <ul>
+      <li>MCMC is usually applied to posteriors with large numbers of dimensions.</li>
+      <li>This is precisely the regime in which MCMC shines.</li>
+      <li>A typical phylogenetic analysis (as we'll see later) may contain many hundreds
+        of distinct parameters.</li>
+      <li>How do we develop algorithms to sample from posteriors over
+      these parameter spaces?</li>
+    </ul>
   </section>
 
   <section>
     <h2>Complex proposals</h2>
+
+    <p>The usual approach is to decompose the proposal function $q(\vec{x}'|\vec{x})$ in terms of a large number of simpler proposals:
+      $$q(\vec{x}'|\vec{x})=\sum_j w_j q_j(\vec{x}'|\vec{x})$$</p>
+
   </section>
 
   <section>
     <h2>Example</h2>
+
+    <div>
+    <div id="targetDensity2d" style="margin:auto;width:70%"></div>
+    </div>
+    <script src="plot_2dExamples.js"></script>
   </section>
 
   <section>
