@@ -313,18 +313,47 @@ layout: lecture
   <section>
     <h2>How do we assess convergence?</h2>
 
+    <p>The easiest approach is simply to run multiple independent
+    chains, each initialized from a unique starting point.</p>
+
+    <img style="float:right;width:45%" data-src="MCMC_convergence_testing.png">
+    <div style="width:50%;">
     <ul>
-      <li>The easiest approach is simply to run multiple independent chains, each
-        initialized from a unique starting point.</li>
-      <li>Comparing the resulting histograms (with any of a variety of methods,
-        e.g. q-q plots) is a great practical test.</li>
-      <li>Additionally, once convergence is attained, combining the results of
+      <li>Chains can be run in parallel.</li>
+      <li>Resulting sample distributions can be compared using (for example) Q-Q plots.</li>
+      <li>Once convergence is attained, combining the results of
         multiple chains is perfectly acceptable.</li>
       </ul>
+    </div>
   </section>
 
   <section>
     <h2>How do we assess mixing?</h2>
+
+   <p>The key to assessing mixing is the autocorrelation function of the chain states:</p>
+
+    $$\widehat{ACF}(l) = \frac{\sum_i x_i x_{i-l}}{\left(\sum_i x_i\right)^2}$$
+
+    <img style="width:100%" data-src="MCMC_acf.png">
+
+  </section>
+
+  <section>
+    <h2>Assessing Mixing (continued)</h2>
+
+    <p>The lag required for this function to decay to within the
+      vicinity of 0 is the gap between effectively independent
+      samples, $\tau$.</p>
+
+    <p>If $N$ is the total number of MCMC samples, we then define
+    $$N_{\text{eff}}=\frac{N}{\tau}$$
+    to be the <b>effective sample size</b> (ESS).</p>
+
+    <p>The ESS is a rough <i>estimate</i> of the number of actual
+      samples a chain has generated.</p>
+
+    <blockquote>You should really only
+      consider the order of magnitude of the ESS.</blockquote>
   </section>
 
   <section>
