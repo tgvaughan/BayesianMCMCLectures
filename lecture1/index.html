@@ -409,11 +409,24 @@ layout: lecture
   </section>
 
   <section>
-    <h2>A proposal for correlated variables</h2>
+    <h2>Correlated variables</h2>
+
+    <ul>
+      <li>Chain is mixing slowly because of strong correlations between the two
+        parameters.</li>
+      <li>Solution is to update both parameters simultaneously.</li>
+      <li>Anticipating correlations between parameters is a key skill in designing efficient MCMC algorithms.</li>
+      <li>In the Bayesian context, this often requires careful examination of the likelihood: non-identifiability is a source of such correlations.</li>
+    </ul>
+    <p>Include a third proposal operator:</p>
+      $$q_3(\vec{x}'|\vec{x}) = \frac{1}{v}\int_{-v/2}^{v/2}\delta(x_1'-(x_1+a))\delta(x_2'-(x_2+a))\mathrm{d}a$$
+
   </section>
 
   <section>
     <h2>Mixing improvement with new operator</h2>
+
+    <div id="mcmcTrace2dBetter" style="margin:auto;width:80%"></div>
   </section>
 
   <section>

@@ -121,4 +121,32 @@ $(document).ready(function() {
     }
 
     Plotly.plot("mcmcTrace2dFirstTry", [truth, mcmcTrace], traceLayout, {displayModeBar: false});
+
+
+    function makeBetterProposal(w,v) {
+        return function(x, y) {
+            var xp, yp;
+
+            var u = Math.random();
+
+            if (u < 1/3) {
+                xp = x + w*(Math.random()-0.5);
+                yp = y;
+            } else {
+                if (u < 2/3) {
+                    xp = x;
+                    yp = y + w*(Math.random()-0.5);
+                } else {
+                    a = v*(Math.random()-0.5);
+                    xp = x + a;
+                    yp = y + a;
+                }
+            }
+
+            return {x: xp, y: yp}
+        }
+    }
+
+    var mcmcTrace2 = doMCMC(targetDensity, makeBetterProposal(1,1), 1000, 2,-2);
+    Plotly.plot("mcmcTrace2dBetter", [truth, mcmcTrace2], traceLayout, {displayModeBar: false});
 });
