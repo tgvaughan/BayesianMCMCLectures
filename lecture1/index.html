@@ -588,22 +588,103 @@ layout: lecture
 
   <section>
     <h2>The Marginal Likelihood</h2>
+    <ul>
+      <li>The posterior for parameters $\vec{\theta}_M$ of model $M$ given data $\vec{d}$ is:
+        $$P(\vec{\theta}_M = \frac{P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)}{P(\vec{d}|M)}$$</li>
+      <li>The troublesome denominator
+        $$P(\vec{\d}|M)=\sum_{\vec{\theta}_M}P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
+        can be regarded as the likelihood (or marginal likelihood) for $M$ given the data.</li>
+      <li>This function is central to Bayesian model selection, e.g. Bayes factors:
+        \begin{align}
+        \frac{P(M_1|\vec{d})}{P(M_2|\vec{d})}&=\frac{P(M_1|\vec{d})P(M_1)}{P(M_2|\vec{d})P(M_2)}\\
+        &=\frac{P(M_1|\vec{d})}{P(M_2|\vec{d})}\text{ if }P(M_1)=P(M_2)
+        \end{align}</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Bayesian Occam's Razor</h2>
+    <p>Interestingly, the marginal likelihood (aka the "evidence") for a model automatically penalizes against overfitting:</p>
+
+    <div class="figure">
+      <img data-src="occam.svg" style="width:80%">
+      <div class="cite" style="text-align:right">Idea due to MacKay, 2003</div>
+    </div>
+
+      <p style="text-align:center;font-style:italic">But how can we compute it?</p>
   </section>
 
   <section>
     <h2>The Harmonic Mean Estimator</h2>
-    </section>
+
+    <p>Idea: use the fact that we can draw samples $\vec{\theta}_M^{(i)}$ from the posterior under the model:
+      \begin{align}
+      \lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}f(\vec{\theta}_M^{(i)}
+      &= \sum_{\vec{\theta}_M}f(\vec{\theta}_M)P(\vec{\theta}_M|\vec{d},M)\\
+      &= \sum_{\vec{\theta}_M}f(\vec{\theta}_M)\frac{P(\vec{d}|\vec{\theta}_M|,M)P(\vec{\theta}_M|M)}{P(\vec{d}|M)}
+      \end{align}
+    <ul>
+      <li>Thus $\lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}\frac{1}{P(\vec{d}|\vec{\theta}_M)}=\frac{1}{P(\vec{d}|M)}.</li>
+      <li>Sadly, this has a reputation for being <i>the worst Monte Carlo method ever invented</i>!
+        <ul>
+          <li>Any idea why?</li>
+      </ul></li>
+    </ul>
+  </section>
 
   <section>
     <h2>Thermodynamic Integration</h2>
+    <ul>
+      <li>This is the "correct" way to compute the marginal likelihood using MCMC.</li>
+      <li>From Lartillot and Phillipe (2006):<br>
+        Suppose $p_i(\vec{theta})=\frac{1}{Z_i}q_i(\vec{\theta})$, $i=0,1$.<br>
+        Here $Z_i=\sum_{\vec{\theta}}q_i(\vec{\theta})$.</li>
+      <li>Define a continuous series of distributions $p_{\beta}$, $q_{\beta}$, $Z_{\beta}$ for $\beta\in[0,1]$.</li>
+      <li>It is easy to show that
+        $$E\left[\frac{\partial\log q_{\beta}(\vec{\theta})}{\partial\beta}\right]=\frac{\partial Z_{\beta}}{\partial\beta}$$</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Thermodynamic Integration (continued)</h2>
+    <ul>
+      <li>Thus, by using MCMC to produce estimates for $E[\partial\log q_{\beta}(\vec{\theta})/\partial\beta]$ under a series of distributions between $\beta=0$ and $\beta=1$ one can numerically integrate this sampled curve to give an estimate for
+      $$\int\mathrm{d}\beta \frac{\partial \log Z_{\beta}}{\partial\beta}=\log Z_1-\log Z_0$$</li>
+      <li>In practice one can also slowly vary $\beta$ during the MCMC run.</li>
+    </ul>
   </section>
 
   <section>
     <h2>Annealing-Melting Integration</h2>
+
+    <ul>
+      <li>The most straight-forward approach is to use something like the following
+        $$q_{\beta}(\vec{\theta}_M) = P(\vec{d}|\vec{\theta}_M,M)^{\beta}P(\vec{\theta}_M|M)$$</li>
+      <li>Then $q_1(\vec{\theta}_M)$ is the unnormalized posterior and $q_0(\vec{\theta}_M)$ is the prior.</li>
+      <li>Integration of the expectation over $\beta$ then yields
+        $$\log Z_1 - \log Z_0 = \log Z_1 = \log P(\vec{d}|M)$$</li>
+    </ul>
+
   </section>
 
   <section>
     <h2>Model-switch Integration</h2>
+
+    <ul>
+      <li>One difficulty with the previous scheme is that it requires one to use MCMC to sample from the prior.  This can be challenging as priors can be very broad.</li>
+      <li>An alternative is to use instead
+        \begin{align}
+        q_{\beta}(\vec{\theta})=&\left[P(\vec{d}|\vec{\theta}_{M},M_1)P(\vec{\theta}_{M}|M_1)\right]^{\beta}\\
+        &\times\left[P(\vec{d}|\vec{\theta}_{M},M_2)P(\vec{\theta}_{M}|M_2)\right]^{1-\beta}
+        \end{align}
+      </li>
+      <li>Integration of the expectation over $\beta$ then directly yields the log Bayes Factor:
+        $$\log Z_1 - \log Z_0 = \log Z_1 = \log \frac{P(\vec{d}|M_1)}{P(\vec{d}|M_2)}$$</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Model-switch integration example</h2>
   </section>
 </section>
 
