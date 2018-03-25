@@ -61,6 +61,12 @@ $(document).ready(function() {
         return({y: x, x: samples})
     }
 
+    function getHistogram(mcmcTrace) {
+        return {x: mcmcTrace.y,
+                type: 'histogram', histnorm: 'probability density'}
+    }
+
+
     var mcmcTrace = doMCMC(targetDensity, 3, 2000, -10);
     
     Plotly.plot("mcmcTrace", [mcmcTrace], {width: 1000,
@@ -68,6 +74,15 @@ $(document).ready(function() {
                                            margin: {t:10},
                                            xaxis: {title: "Iteration"},
                                            yaxis: {title: "x"}},
+                {displayModeBar: false});
+
+    Plotly.plot("mcmcDensity", [getHistogram(mcmcTrace), truth],
+                {width: 1000,
+                 height: 600,
+                 margin: {t:10},
+                 xaxis: {title: "x"},
+                 yaxis: {title: "Estimated density"},
+                 showlegend:false},
                 {displayModeBar: false});
     
     var N = 5000;
@@ -90,11 +105,6 @@ $(document).ready(function() {
     Plotly.plot("mcmcTrace_w1", [mcmcTrace1], layout, {displayModeBar: false});
     Plotly.plot("mcmcTrace_w2", [mcmcTrace2], layout, {displayModeBar: false});
     Plotly.plot("mcmcTrace_w3", [mcmcTrace3], layout, {displayModeBar: false});
-
-    function getHistogram(mcmcTrace) {
-        return {x: mcmcTrace.y,
-                type: 'histogram', histnorm: 'probability density'}
-    }
 
     var densityLayout =  {
         width: 300,

@@ -282,6 +282,12 @@ layout: lecture
 
     <div id="mcmcTrace" style="width:100%"> </div>
   </section>
+
+   <section>
+    <h2>Implementation example</h2>
+
+    <div id="mcmcDensity" style="width:100%"> </div>
+  </section>
   
   <section>
     <h2>Implementation example</h2>
@@ -431,6 +437,66 @@ layout: lecture
 
   <section>
     <h2>Alternative approach: Hamiltonian Monte Carlo</h2>
+
+    <ul>
+      <li> The Hamiltonian formalization of classical mechanics
+      relates the dynamics of phase space coordinates $(\vec{q},\vec{p})$ to the
+      Hamiltonian function $H(\vec{q},\vec{p})=K(\vec{p}) + V(\vec{q})$ via Hamilton's
+      equations:
+        \begin{align}
+        \dot{q}_i &= \frac{\partial H}{\partial p_i}\\
+        \dot{p}_i &= -\frac{\partial H}{\partial q_i}
+        \end{align}
+      <li> Hamiltonian (/hybrid) Monte Carlo is an MCMC algorithm that
+      treats the parameter state vector as the position component of
+      canonical coordinates in phase space.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Alternative approach: Hamiltonian Monte Carlo</h2>
+
+    <ul>
+      <li>HMC assumes that the system is in thermal contact
+        with a heat bath of fixed temperature ("canonical ensemble"): </li>
+    </ul>
+    <img data-src="canonical_ensemble.svg" style="width:25%">
+
+    <ul>
+      <li>The finite temperature means that the probability of observing the system in an accessible state $(\vec{q},\vec{p})$ is
+    $$P(\vec{q},\vec{p}) = \frac{1}{Z}e^{-H(\vec{q},\vec{p})/T}$$
+    where $Z=\sum_{\vec{q},\vec{p}}e^{-H(\vec{q},\vec{p})/T}$ is the partition function.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Alternative approach: Hamiltonian Monte Carlo</h2>
+
+    <ul>
+      <li>Note that the probability distribution factorizes
+        $$P(\vec{q},\vec{p})=Z^{-1}\exp[-(K(\vec{p})+V(\vec{q}))/T]=P(\vec{q})P(\vec{p})$$</li>
+      <li>The MCMC method involves identifying the position coordinates $\vec{q}$ with the variables ($\vec{x}$) of interest , and defining  $V(\vec{q})$ such that $P(\vec{q})$ is the target density, i.e.
+        $$V(\vec{q}) = -T\log[ZP(\vec{q})]$$</li>
+      <li>The actual update step for the algorithm involves:
+        <ol>
+          <li>Sampling a new $\vec{p}^*$ from $P(\vec{p})$ (easy,
+          since $K(\vec{p})$ is quadratic and hence $P(\vec{p})$ is
+          Gaussian,</li>
+          <li>Evolving the state using Hamiltons equations from
+          $(\vec{q},\vec{p}^*)$ to $(\vec{q}',\vec{p}')$.</li>
+          <li>Performing an MCMC accept/reject for this new state
+          compared to the original state $(\vec{q},\vec{p})$.</li>
+      </ol></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Alternative approach: Hamiltonian Monte Carlo</h2>
+
+    <div class="figure">
+      <img data-src="HMC_example.png">
+      <div class="cite" style="font-size:0.5em">Radford Neal, MCMC using Hamltonian dynamics (in Handbook of Markov chain Monte Carlo, 2011)</div>
+    </div>
   </section>
 
 </section>

@@ -98,7 +98,7 @@ $(document).ready(function() {
         }
     }
 
-    var mcmcTrace = doMCMC(targetDensity, makeProposal(1), 1000, 2,-2);
+    var mcmcTrace = doMCMC(targetDensity, makeProposal(2), 200, 2,-2);
 
     var traceLayout =  {
         width: 800,
@@ -147,6 +147,6 @@ $(document).ready(function() {
         }
     }
 
-    var mcmcTrace2 = doMCMC(targetDensity, makeBetterProposal(1,1), 1000, 2,-2);
+    var mcmcTrace2 = doMCMC(targetDensity, makeBetterProposal(2,2), 200, 2,-2);
     Plotly.plot("mcmcTrace2dBetter", [truth, mcmcTrace2], traceLayout, {displayModeBar: false});
 });
