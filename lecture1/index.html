@@ -592,13 +592,16 @@ layout: lecture
       <li>The posterior for parameters $\vec{\theta}_M$ of model $M$ given data $\vec{d}$ is:
         $$P(\vec{\theta}_M = \frac{P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)}{P(\vec{d}|M)}$$</li>
       <li>The troublesome denominator
-        $$P(\vec{\d}|M)=\sum_{\vec{\theta}_M}P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
-        can be regarded as the likelihood (or marginal likelihood) for $M$ given the data.</li>
-      <li>This function is central to Bayesian model selection, e.g. Bayes factors:
+        $$P(\vec{d}|M)=\sum_{\vec{\theta}_M}P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
+        is the likelihood (or marginal likelihood) for $M$ given the data.</li>
+      <li>This function is central to Bayesian model selection:
+        <div style="font-size:0.8em">
         \begin{align}
         \frac{P(M_1|\vec{d})}{P(M_2|\vec{d})}&=\frac{P(M_1|\vec{d})P(M_1)}{P(M_2|\vec{d})P(M_2)}\\
         &=\frac{P(M_1|\vec{d})}{P(M_2|\vec{d})}\text{ if }P(M_1)=P(M_2)
-        \end{align}</li>
+        \end{align}
+        </div>
+      </li>
     </ul>
   </section>
 
@@ -619,12 +622,12 @@ layout: lecture
 
     <p>Idea: use the fact that we can draw samples $\vec{\theta}_M^{(i)}$ from the posterior under the model:
       \begin{align}
-      \lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}f(\vec{\theta}_M^{(i)}
+      \lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}f(\vec{\theta}_M^{(i)})
       &= \sum_{\vec{\theta}_M}f(\vec{\theta}_M)P(\vec{\theta}_M|\vec{d},M)\\
-      &= \sum_{\vec{\theta}_M}f(\vec{\theta}_M)\frac{P(\vec{d}|\vec{\theta}_M|,M)P(\vec{\theta}_M|M)}{P(\vec{d}|M)}
+      &= \sum_{\vec{\theta}_M}f(\vec{\theta}_M)\frac{P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)}{P(\vec{d}|M)}
       \end{align}
     <ul>
-      <li>Thus $\lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}\frac{1}{P(\vec{d}|\vec{\theta}_M)}=\frac{1}{P(\vec{d}|M)}.</li>
+      <li>$\implies\lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}\frac{1}{P(\vec{d}|\vec{\theta}_M^{(i)},M)}=\frac{1}{P(\vec{d}|M)}$.</li>
       <li>Sadly, this has a reputation for being <i>the worst Monte Carlo method ever invented</i>!
         <ul>
           <li>Any idea why?</li>
@@ -636,12 +639,13 @@ layout: lecture
     <h2>Thermodynamic Integration</h2>
     <ul>
       <li>This is the "correct" way to compute the marginal likelihood using MCMC.</li>
-      <li>From Lartillot and Phillipe (2006):<br>
-        Suppose $p_i(\vec{theta})=\frac{1}{Z_i}q_i(\vec{\theta})$, $i=0,1$.<br>
-        Here $Z_i=\sum_{\vec{\theta}}q_i(\vec{\theta})$.</li>
-      <li>Define a continuous series of distributions $p_{\beta}$, $q_{\beta}$, $Z_{\beta}$ for $\beta\in[0,1]$.</li>
+      <li>From Lartillot and Phillipe (2006):
+        <ul>
+          <li>Suppose $p_i(\vec{\theta})=\frac{1}{Z_i}q_i(\vec{\theta})$, $i=0,1$, where $Z_i=\sum_{\vec{\theta}}q_i(\vec{\theta})$.</li>
+          <li>Define a continuous series of distributions $p_{\beta}$, $q_{\beta}$, $Z_{\beta}$ for $\beta\in[0,1]$.</li>
       <li>It is easy to show that
         $$E\left[\frac{\partial\log q_{\beta}(\vec{\theta})}{\partial\beta}\right]=\frac{\partial Z_{\beta}}{\partial\beta}$$</li>
+        </ul>
     </ul>
   </section>
 
@@ -684,10 +688,33 @@ layout: lecture
   </section>
 
   <section>
-    <h2>Model-switch integration example</h2>
+    <h2>Model-switch Integration</h2>
+
+    <div class="figure">
+      <img data-src="logBF_comp.png" style="width:60%">
+    </div>
+
+    <p>In this case, the integral yields a BF of $10^{17}$ in favour of model 1 over model 0.</p>
   </section>
+
 </section>
 
+<section>
+  <h1>Summary of Part 1</h1>
+  
+  <ol>
+    <li>Metropolis-Hastings MCMC is one of a large family of Monte Carlo methods useful for Bayesian analysis.</li>
+    <li>Its usefulness depends critically on the proposal mechanism.  Getting this right involves either
+      <ul>
+        <li>knowing enough about the posterior to create well-behaved operators, or</li>
+        <li>using an adaptive method such as Hamiltonian Monte Carlo.</li>
+      </ul>
+
+      <li>Using MCMC to sample from mixtures of parameter densities of different dimensions is not only possible, it's easy!</li>
+      <li>MCMC can also be used to directly compute model likelihoods and Bayes factors via thermodynamic integration.</li>
+  </ol>
+  
+</section>
 
 <!--
 
