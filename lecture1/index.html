@@ -510,14 +510,73 @@ layout: lecture
 
   <section>
     <h2>The Problem</h2>
+
+    <ul>
+      <li>Suppose we have a posterior density of the form:
+        $$P(\vec{x}_k,k) = \sum_{k}Pf(\vec{x_k}|k)P(k)$$
+        where the dimension of $\vec{x}_k$ depends on $k$.</li>
+      <li>"The number of things you don't know is one of the things you don't know."</li>
+      <li>This is a straight-forward way of dealing with model selection. (In fact, model selection and parameter inference are essentially the same thing...)</li>
+      <li>Can we still use MCMC to sample from this distribution?</li>
+    </ul>
   </section>
 
   <section>
     <h2>The Solution</h2>
+
+    <img data-src="green.png" style="width:80%">
   </section>
 
   <section>
-    <h2>Confusion abounds?</h2>
+    <h2>The Solution</h2>
+
+    <p>Use the following form of the detailed balance criterion:</p>
+    $$\int_{\vec{x}_A\in A}\int_{\vec{x}'_B\in B} P(\vec{x}_A)Q(\vec{x}'_B|\vec{x}_A) =
+    \int_{\vec{x}_B\in B} \int_{\vec{x}'_A\in A} P(\vec{x}_B)Q(\vec{x}'_A|\vec{x}_B)$$
+    <p>Here $A$ and $B$ are any two subsets of the state space, while $Q(\vec{x}'|\vec{x})$ is the MCMC transition kernel:</p>
+        $$Q(\vec{x}'|\vec{x})=\alpha(\vec{x}',\vec{x})q(\vec{x}'|\vec{x}) + \delta(\vec{x}'-\vec{x})(1-\int_{\vec{y}\in\mathcal{V}}\alpha(\vec{y},\vec{x})q(\vec{y}|\vec{x}))$$
+    <p>The DB criterion then reduces to</p>
+    <div style="font-size:0.8em">$$\int_{\vec{x}_A\in A}\int_{\vec{x}'_B\in B} P(\vec{x}_A)\alpha(\vec{x}'_B,\vec{x}_A)q(\vec{x}'_B|\vec{x}_A) =
+    \int_{\vec{x}_B\in B} \int_{\vec{x}'_A\in A} P(\vec{x}_B)\alpha(\vec{x}'_A,\vec{x}_B)q(\vec{x}'_A|\vec{x}_B)$$
+    </div>
+  </section>
+
+  <section>
+    <h2>The Solution</h2>
+
+    <div style="font-size:0.8em">$$\int_{\vec{x}_A\in A}\int_{\vec{x}'_B\in B} P(\vec{x}_A)\alpha(\vec{x}'_B,\vec{x}_A)q(\vec{x}'_B|\vec{x}_A) =
+    \int_{\vec{x}_B\in B} \int_{\vec{x}'_A\in A} P(\vec{x}_B)\alpha(\vec{x}'_A,\vec{x}_B)q(\vec{x}'_A|\vec{x}_B)$$
+    </div>
+
+    <ul>
+      <li>Deriving an acceptance probability from the above criterion is guaranteed to produce a chain that converges to the correct distribution (assuming your proposal is capable of exploring the state space, of course).</li>
+      <li>For the most part,
+        $$\alpha(\vec{x}',\vec{x}) = 1\wedge \frac{P(\vec{x}')}{P(\vec{x})}\times\frac{q(\vec{x}|\vec{x}')}{q(\vec{x}'|\vec{x})}$$
+        just works.</li>
+      <li>In the case that proposals contain singularities (occasionally the case for model switching), the safest thing is to back up and derive $\alpha(\vec{x}',\vec{x})$ from the criterion directly.</li>
+      </ul>
+  </section>
+
+  <section>
+    <h2>Reversible jump is confusingly named?</h2>
+
+    <ul>
+      <li>Consider a proposal involving choosing $f\sim\text{Unif}(1/\beta,\beta$ then setting $\vec{x}'=f\vec{x}$.</li>
+      <li>The proposal function for this move is:
+        $$q(\vec{x}'|\vec{x})=\frac{1}{\beta-\beta^{-1}}\int_{\beta^{-1}}^{\beta}\mathrm{d}f\delta(\vec{x}'-f\vec{x})$$</li>
+      <li> This does not involve a dimension change. However, due to the singularity it is easiest to derive the acceptance probability for the move from the DB criterion directly.</li>
+      <li>The $\alpha$ for other proposals which <b>do</b> involve a dimension change can often be derived simply by substituting the proposal densities directly into the usual expression.</li>
+        
+  </section>
+
+  <section>
+    <h2>Final words</h2>
+
+    <ul class="spaced" style="margin-top:5%">
+      <li>One often hears "reversible jump" mentioned in hushed tones.</li>
+      <li>However, as long as you use the generalized detailed balance criterion, you won't go wrong.</li>
+      </ul>
+    <p style="text-align:center; font-size:2em; font-weight:bold; margin-top:5%">DON'T PANIC!</p>
   </section>
 </section>
 
