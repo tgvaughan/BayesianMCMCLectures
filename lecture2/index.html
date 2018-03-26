@@ -6,7 +6,7 @@ layout: lecture
 
 <section>
   <section class="center">
-    <h1>Bayesian Phylogenetic Inference</h1>
+    <h1>Case 1: Bayesian Phylogenetic Inference</h1>
   </section>
 
   <section>
@@ -635,11 +635,11 @@ layout: lecture
     <ul class="spaced" style="margin-top:10%">
         <li>Only ever gives point estimates: no indication of uncertainty.
             <ul>
-                <li>Addressed using more <i>ad hoc</i>ery: bootstrap algorithms.</li>
+                <li>Addressed using <i>ad hoc</i>ery: bootstrap algorithms.</li>
             </ul>
         </li>
 
-        <li>Lacks rigorous theoretical basis: $L(\theta|D)$ is not a probability!</li>
+        <li>$L(\theta|D)$ is not a probability!</li>
 
         <li>No clear way of incorporating additional (prior?) information into the analysis.</li>
     </ul>
@@ -879,47 +879,12 @@ layout: lecture
   <p><i>... there are many others!</i></p>
 </section>
 
-<section>
-  <h2>Summary</h2>
-
-  <ul>
-    <li>Bayesian phylogenetic inference is generally done by adding a tree
-      prior to the tree likelihood. This implicitly assumes neutral
-      evolution.</li>
-    <li>Tree priors link the shape of the tree to parameters such as
-      speciation rates, extinction rates, sampling rates, population
-      sizes and migration rates.</li>
-    <li>Development of these priors is a particularly rich area of current
-      research.</li>
-    <li>Due to the immense size of the state spaces involved and the use of
-      distributions which are analytically intractable, almost all
-      Bayesian phylogenetic inference uses MCMC.</li>
-    <li>Deciding on stopping criteria is difficult.  Many necessary
-      requirements for convergence, but no sufficient requirements!</li>
-    <li>Methods for summarizing sampled tree distributions exist, but may
-      be misleading. At the moment, sticking to summary statistics for
-      particular characteristics of interest is the only safe
-      option.</li>
-  </ul>
-</section>
-
-<section>
-  <h2>Recommended Reading</h2>
-
-  <div class="figure" style="display:inline-block;height:400px;margin-top:2em">
-    <img data-src="InferringPhylogenies.jpg">
-  </div>
-
-  <div class="figure" style="display:inline-block;height:400px;margin-left:2em;margin-top:2em">
-    <img data-src="beast_book_cover.jpeg">
-  </div>
-</section>
-
 </section>
 
 <section>
   <section class="center">
-    <h1>Bayesian inference of bacterial recombination graphs</h1>
+    <h1>Case 2: Bayesian inference of bacterial<br>
+      ancestral recombination graphs</h1>
   </section>
 
 <section>
@@ -1003,19 +968,19 @@ layout: lecture
         <li class="fragment">Pre-processing of data to identify and remove
             non-vertically inherited material. (eg. START: <a class="cite" href="">Jolley et al., 2001</a>)
 
-            <table style="width:800px">
+            <table style="width:800px;font-size:0.9em">
                 <tr><th style="width:400px">Pros</th> <th>Cons</th></tr>
                 <tr>
                     <td>
                         <ul>
-                            <li class="fragment">Can use standard tools for
+                            <li>Can use standard tools for
                                 phylogenetic inference.</li>
                         </ul>
                     </td>
                     <td>
                         <ul>
-                            <li class="fragment">Data is being thrown away.</li>
-                            <li class="fragment">Ad hoc, may bias results.</li>
+                            <li>Data is being thrown away.</li>
+                            <li>Ad hoc, may bias results.</li>
                         </ul>
                     </td>
                 </tr>
@@ -1023,24 +988,24 @@ layout: lecture
             </table>
         </li>
 
-        <li class="fragment" style="margin-top:20px">Explicit modelling of bacterial recombination.<br>
+        <li class="fragment" style="margin-top:1em">Explicit modelling of bacterial recombination.<br>
             (eg. ClonalFrame and ClonalOrigin: <a class="cite" href="">Didelot et al., 2007</a>, <a class="cite" href="">2010</a>)
 
-            <table style="width:800px">
+            <table style="width:800px;font-size:0.9em">
                 <tr><th style="width:400px">Pros</th> <th>Cons</th></tr>
                 <tr>
                     <td>
                         <ul>
-                            <li class="fragment">Can make use of all data.</li>
-                            <li class="fragment">Can infer additional parameters such as recombination rates.</li>
-                            <li class="fragment">May yield increased confidence in estimates.</li>
+                            <li>Can make use of all data.</li>
+                            <li>Can infer additional parameters such as recombination rates.</li>
+                            <li>May yield increased confidence in estimates.</li>
                         </ul>
                     </td>
                     <td>
                         <ul>
-                            <li class="fragment">Models can be complex, with many parameters.</li>
-                            <li class="fragment">Both computationally and statistically challenging.</li>
-                            <li class="fragment">Existing implementations lack flexibility.</li>
+                            <li>Models can be complex, with many parameters.</li>
+                            <li>Both computationally and statistically challenging.</li>
+                            <li>Existing implementations lack flexibility.</li>
                         </ul>
                     </td>
                 </tr>
@@ -1373,6 +1338,47 @@ layout: lecture
 </section>
 </section>
 
+<section>
+<section>
+  <h2>Summary</h2>
+
+  <ul>
+    <li>Bayesian phylogenetic inference is generally done by adding a tree
+      prior to the tree likelihood. This implicitly assumes neutral
+      evolution.</li>
+    <li>Tree priors link the shape of the tree to parameters such as
+      speciation rates, extinction rates, sampling rates, population
+      sizes and migration rates.</li>
+    <li>Development of these priors is a particularly rich area of current
+      research.</li>
+    <li>Due to the immense size of the state spaces involved and the use of
+      distributions which are analytically intractable, almost all
+      Bayesian phylogenetic inference uses MCMC.</li>
+    <li>Deciding on stopping criteria is difficult.  Many necessary
+      requirements for convergence, but no sufficient requirements!</li>
+    <li>Methods for summarizing sampled tree distributions exist, but may
+      be misleading. At the moment, sticking to summary statistics for
+      particular characteristics of interest is the only safe
+      option.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Recommended Reading</h2>
+
+  <div class="figure" style="display:inline-block;height:400px;margin-top:2em">
+    <img data-src="InferringPhylogenies.jpg" class="shadow">
+  </div>
+
+  <div class="figure" style="display:inline-block;height:400px;margin-left:2em;margin-top:2em">
+    <img data-src="hein.jpeg" class="shadow">
+  </div>
+
+  <div class="figure" style="display:inline-block;height:400px;margin-left:2em;margin-top:2em">
+    <img data-src="beast_book_cover.jpeg" class="shadow">
+  </div>
+</section>
+</section>
 
 <!--
     1. Bayesian phylogenetic inference in BEAST
