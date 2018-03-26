@@ -10,7 +10,7 @@ $(document).ready(function() {
     var guide = {x: [0,100], y:[100,100], mode: "lines", name: "Particles in universe", showlegend: true};
 
     var layout =  {
-        width: 900,
+        width: 1000,
         height: 400,
         margin: {
             t:10

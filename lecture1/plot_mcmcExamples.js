@@ -1,3 +1,5 @@
+var generateTraces;
+
 $(document).ready(function() {
 
     function targetDensity(x) {
@@ -66,62 +68,65 @@ $(document).ready(function() {
                 type: 'histogram', histnorm: 'probability density'}
     }
 
+    generateTraces = function() {
 
-    var mcmcTrace = doMCMC(targetDensity, 3, 2000, -10);
-    
-    Plotly.plot("mcmcTrace", [mcmcTrace], {width: 1000,
-                                           height: 500,
-                                           margin: {t:10},
-                                           xaxis: {title: "Iteration"},
-                                           yaxis: {title: "x"}},
-                {displayModeBar: false});
+        var mcmcTrace = doMCMC(targetDensity, 3, 2000, -10);
+        
+        Plotly.newPlot("mcmcTrace", [mcmcTrace], {width: 1000,
+                                               height: 500,
+                                               margin: {t:10},
+                                               xaxis: {title: "Iteration"},
+                                               yaxis: {title: "x"}},
+                    {displayModeBar: false});
 
-    Plotly.plot("mcmcDensity", [getHistogram(mcmcTrace), truth],
-                {width: 1000,
-                 height: 600,
-                 margin: {t:10},
-                 xaxis: {title: "x"},
-                 yaxis: {title: "Estimated density"},
-                 showlegend:false},
-                {displayModeBar: false});
-    
-    var N = 5000;
-    var mcmcTrace1 = doMCMC(targetDensity, 1, N, -10);
-    var mcmcTrace2 = doMCMC(targetDensity, 3, N, -10);
-    var mcmcTrace3 = doMCMC(targetDensity, 5, N, -10);
+        Plotly.newPlot("mcmcDensity", [getHistogram(mcmcTrace), truth],
+                    {width: 1000,
+                     height: 600,
+                     margin: {t:10},
+                     xaxis: {title: "x"},
+                     yaxis: {title: "Estimated density"},
+                     showlegend:false},
+                    {displayModeBar: false});
+        
+        var N = 5000;
+        var mcmcTrace1 = doMCMC(targetDensity, 1, N, -10);
+        var mcmcTrace2 = doMCMC(targetDensity, 3, N, -10);
+        var mcmcTrace3 = doMCMC(targetDensity, 5, N, -10);
 
-     var layout =  {
-        width: 700,
-        height: 150,
-        margin: {t:10,b:30},
-        xaxis: {
-            title: "Iteration",
-        },
-        yaxis: {
-            title: "x"
-        },
+        var layout =  {
+            width: 700,
+            height: 150,
+            margin: {t:10,b:30},
+            xaxis: {
+                title: "Iteration",
+            },
+            yaxis: {
+                title: "x"
+            },
+        };
+        
+        Plotly.newPlot("mcmcTrace_w1", [mcmcTrace1], layout, {displayModeBar: false});
+        Plotly.newPlot("mcmcTrace_w2", [mcmcTrace2], layout, {displayModeBar: false});
+        Plotly.newPlot("mcmcTrace_w3", [mcmcTrace3], layout, {displayModeBar: false});
+
+        var densityLayout =  {
+            width: 300,
+            height: 150,
+            margin: {t:10,b:30,l:30},
+            xaxis: {
+                title: "x",
+            },
+            yaxis: {
+                title: ""
+            },
+            showlegend: false
+        };
+
+
+        Plotly.newPlot("mcmcDensity_w1", [getHistogram(mcmcTrace1), truth], densityLayout, {displayModeBar: false});
+        Plotly.newPlot("mcmcDensity_w2", [getHistogram(mcmcTrace2), truth], densityLayout, {displayModeBar: false});
+        Plotly.newPlot("mcmcDensity_w3", [getHistogram(mcmcTrace3), truth], densityLayout, {displayModeBar: false});
     };
-   
-    Plotly.plot("mcmcTrace_w1", [mcmcTrace1], layout, {displayModeBar: false});
-    Plotly.plot("mcmcTrace_w2", [mcmcTrace2], layout, {displayModeBar: false});
-    Plotly.plot("mcmcTrace_w3", [mcmcTrace3], layout, {displayModeBar: false});
 
-    var densityLayout =  {
-        width: 300,
-        height: 150,
-        margin: {t:10,b:30,l:30},
-        xaxis: {
-            title: "x",
-        },
-        yaxis: {
-            title: ""
-        },
-        showlegend: false
-    };
-
-
-    Plotly.plot("mcmcDensity_w1", [getHistogram(mcmcTrace1), truth], densityLayout, {displayModeBar: false});
-    Plotly.plot("mcmcDensity_w2", [getHistogram(mcmcTrace2), truth], densityLayout, {displayModeBar: false});
-    Plotly.plot("mcmcDensity_w3", [getHistogram(mcmcTrace3), truth], densityLayout, {displayModeBar: false});
-    
+    generateTraces();
 });

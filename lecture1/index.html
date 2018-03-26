@@ -4,6 +4,9 @@ subtitle: "Part 1: Foundations and Implementation"
 layout: lecture
 ---
 
+<script src="plot_mcmcExamples.js"> </script>
+<script src="plot_2dExamples.js"></script>
+
 <section>
   <section class="center">
     <h1>Introduction</h1>
@@ -15,12 +18,12 @@ layout: lecture
     <ul>
       <li>Bayesian inference is enabled by the Bayesian interpretation of probabilities:
         <ul>
-          <li>Probabilities are just as applicable to hypotheses as they are to data.</li>
-          <li>Inference of models and/or model parameters can be conducted using the standard calculus of probabilities (sum rule, product rule, etc).</li>
+          <li class="fragment">Probabilities are just as applicable to hypotheses as they are to data.</li>
+          <li class="fragment">Inference of models and/or model parameters can be conducted using the standard calculus of probabilities (sum rule, product rule, etc).</li>
       </ul></li>
-      <li>In contrast, sampling theory approaches assign probabilities only to data:
+      <li class="fragment">In contrast, sampling theory approaches assign probabilities only to data:
         <ul>
-          <li>Inference of models and/or parameters is a distinct procedure.
+          <li class="fragment">Inference of models and/or parameters is a distinct procedure.
         </ul>
       </li>
   </section>
@@ -30,15 +33,19 @@ layout: lecture
 
     <p>Suppose we have a vector $\vec{d}$ representing some collected data.  Assuming a model $M$, what do the data tell us about the parameters $\vec{\theta}_M$ of this model?</p>
 
-    <p>The Bayesian solution is simple to derive and tremendously intuitive:</p>
+    <p class="fragment">The Bayesian solution is simple to derive and tremendously intuitive:</p>
 
-    $$P(\vec{\theta}_M|\vec{d},M) = \frac{P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M)}{P(\vec{d}|M)}$$
+    <div class="fragment">
+      $$P(\vec{\theta}_M|\vec{d},M) = \frac{P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M)}{P(\vec{d}|M)}$$
+    </div>
 
-    <p>For models with large parameter space volumes,
+    <p class="fragment">For models with large parameter space volumes,
     actually <i>evaluating</i> this probability for a particular
     $\vec{\theta}_M$ is HARD.</p>
 
-    $$P(\vec{d}|M)=\sum_{\vec{\theta}_M} P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
+    <div class="fragment">
+      $$P(\vec{d}|M)=\sum_{\vec{\theta}_M} P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
+    </div>
   </section>
 
   <section>
@@ -55,10 +62,12 @@ layout: lecture
 
     <p>The posterior probability for a particular time tree $T$ given a multiple sequence alignment $A$ and a neutral substitution model and a coalescent prior on tree space is</p>
     $$P(T,\mu,\theta|A) = \frac{P(A|T,\mu)P(T|\theta)P(\mu,\theta)}{P(A)}$$
-    <p>where $\mu$ and $\theta$ are substitution model and tree prior parameters.</p>
+    <p class="fragment">where $\mu$ and $\theta$ are substitution model and tree prior parameters.</p>
 
-    <p>How difficult is it to compute the denominator?</p>
-    $$P(A)=\sum_{T,\mu,\theta}P(A|T,\mu)P(T|\theta)P(\mu,\theta)$$
+    <p class="fragment">How difficult is it to compute the denominator?</p>
+    <div class="fragment">
+      $$P(A)=\sum_{T,\mu,\theta}P(A|T,\mu)P(T|\theta)P(\mu,\theta)$$
+    </div>
   </section>
 
   <section>
@@ -66,11 +75,11 @@ layout: lecture
 
     <p>The number $N$ of distinct labelled rooted tree topologies
       grows rapidly with the number $m$ of leaves
-      (i.e. sequences in our problem):</p>
+      (i.e. sequences):</p>
 
     $$N_m = \frac{(2m-3)!}{2^{m-2}(m-2)!}$$
 
-    <div id="treecount" class="figure">
+    <div id="treecount" class="figure fragment">
       <script src="plot_treecount.js"></script>
     </div>
   </section>
@@ -79,13 +88,13 @@ layout: lecture
     <h2>Computational solutions to the normalization problem</h2>
 
     <ol class="spaced">
-      <li>Use <b>brute-force enumeration</b> all possible states:
+      <li class="fragment">Use <b>brute-force enumeration</b> all possible states:
         $$\sum_{\vec{\theta}_M}P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
-        <ul><li>Only computationally feasible for relatively small problems.</li></ul>
+        <ul><li class="fragment">Only computationally feasible for relatively small problems.</li></ul>
       </li>
-      <li>Use a <b>variational approach</b> (AKA "variational Bayes"):<br>
+      <li class="fragment">Use a <b>variational approach</b> (AKA "variational Bayes"):<br>
         find $Q(\vec{\theta}_M)$ minimizing $\sum_{\vec{\theta}_M}Q(\vec{\theta}_M)\log\frac{Q(\vec{\theta}_M)}{P(\vec{\theta}_M|\vec{d},M)}$.
-        <ul><li>Requires a parametric ansatz for the posterior.  Not always easy to find, particularly in "interesting" state spaces such as tree space.</li></ul>
+        <ul><li class="fragment">Requires a parametric ansatz for the posterior.  Not always easy to find, particularly in "interesting" state spaces such as tree space.</li></ul>
         </li>
     </ol>
 
@@ -103,12 +112,12 @@ layout: lecture
 
     <ul>
       <li>Broad class of methods which use stochastic algorithms to mathematical problems.</li>
-      <li>A large sub-class of these methods are targeted at the numerical solution of analytically intractable integrals:
+      <li class="fragment">A large sub-class of these methods are targeted at the numerical solution of analytically intractable integrals:
         \begin{align}
         I &= \int_{\vec{x}\in\mathcal{V}} f(\vec{x})p(\vec{x})\\
           &= E_p[f(\vec{x})]
         \end{align}</li>
-      <li>By the law of large numbers:
+      <li class="fragment">By the law of large numbers:
         $$I = \lim_{N\rightarrow\infty} \frac{1}{N}\sum_{i=1}^N f(\vec{x}^{(i)})$$
         where $\vec{x}^{(i)}$ are draws from the distribution $p(\vec{x})$.</li>
     </ul>
@@ -129,14 +138,14 @@ layout: lecture
 
     <ul>
       <li>What happens if we can't sample directly from $p(\vec{x})$?</li>
-      <li>Solution: suppose we have a function $Q(\vec{x})$ also defined on $\mathcal{V}$ from which we can easily generate samples:
+      <li class="fragment">Solution: suppose we have a function $Q(\vec{x})$ also defined on $\mathcal{V}$ from which we can easily generate samples:
         <div class="figure" style="text-align:center">
           <img data-src="importance_sampling.svg" style="width:40%">
       </div></li>
-      <li>We can then use
+      <li class="fragment">We can then use
         $$I=\int_{\vec{x}\in\mathcal{V}}f(\vec{x})\frac{p(\vec{x})}{q(\vec{x})}q(\vec{x}) = E_q\left[f(\vec{x})\frac{p(\vec{x})}{q(\vec{x})}\right]$$</li>
 
-      <li style="margin-top:1.0em">The factor $p(\vec{x}^{(i)})/q(\vec{x}^{(i)})$ is the <b>weight</b> of sample $\vec{x}^{(i)}$.
+      <li style="margin-top:1.0em" class="fragment">The factor $p(\vec{x}^{(i)})/q(\vec{x}^{(i)})$ is the <b>weight</b> of sample $\vec{x}^{(i)}$.
     </ul>
   </section>
 
@@ -145,11 +154,11 @@ layout: lecture
 
     <ul>
       <li>Importance sampling is a very general and useful idea with many applications in Bayesian statistics.</li>
-      <li>A very na&iuml;ve application would be the computation of the normalization factor in Bayes theorem:
+      <li class="fragment">A very na&iuml;ve application would be the computation of the normalization factor in Bayes theorem:
         $$P(\vec{d}|M)=\lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}P(\vec{d}|\vec{\theta}_M^{(i)})$$
         where $\vec{\theta}_M^{(i)}\sim P(\vec{\theta}_M|M)$.</li>
-      <li>Similarly, one could compute expectations of parameters under the posterior.</li>
-      <li>Note that the equation above still holds if unbiased noise is added to the likelihood.</li>
+      <li class="fragment">Similarly, one could compute expectations of parameters under the posterior.</li>
+      <li class="fragment">Note that the equation above still holds if unbiased noise is added to the likelihood.</li>
     </ul>
   </section>
 
@@ -158,14 +167,14 @@ layout: lecture
 
     <ul>
       <li>Suppose we can't even evaluate the likelihood $P(\vec{d}|\vec{\theta}_M,M)$. What then?</li>
-      <li>An example from population genetics might be the probability of a sequence alignment $A$ given some population parameters $\phi=(N(t), \rho, \ldots)$. This probability $P(A|\phi)$ is difficult to compute as it requires summing over a large number of latent variables (including the sampled phylogenetic tree/network).</li>
-      <li>ABC: Replace the likelihood with a <b>cost function</b> depending
+      <li class="fragment">An example from population genetics might be the probability of a sequence alignment $A$ given some population parameters $\phi=(N(t), \rho, \ldots)$. This probability $P(A|\phi)$ is difficult to compute as it requires summing over a large number of latent variables (including the sampled phylogenetic tree/network).</li>
+      <li class="fragment">ABC: Replace the likelihood with a <b>cost function</b> depending
       on the difference between summary statistics evaluated on data
       $\vec{d}_s$ simulated under the $M$ from parameters
       $\vec{\theta}_M$ and the same summaries evaluate using the observed
       data $\vec{d}$.</li>
 
-      <li>While this method seems less than rigorous, there are systematic ways of applying it.</li>
+      <li class="fragment">While this method seems less than rigorous, there are systematic ways of applying it.</li>
       </ul>
   </section>
   
@@ -174,13 +183,13 @@ layout: lecture
 
     <ul>
       <li>Until now we have assumed each sample $\vec{x}^{(i)}$ is statistically independent.</li>
-      <li>Markov chain Monte Carlo methods instead produce a sequence
+      <li class="fragment">Markov chain Monte Carlo methods instead produce a sequence
         of correlated samples
         $\vec{x}^{(1)}, \vec{x}^{(2)},\ldots,\vec{x}^{(N)}$,
         where each element is drawn from a distribution depending only
       on the previous element:
         $$\vec{x}^{(i+1)} \sim Q(\vec{x}'|\vec{x}^{(i)})$$</li>
-      <li>Allows samples to adapt to shape of distribution:
+      <li class="fragment">Allows samples to adapt to shape of distribution:
         <div class="figure" style="text-align:center">
           <img data-src="markov_chain.svg" style="width:50%">
         </div>
@@ -194,9 +203,9 @@ layout: lecture
     <ul>
       <li>To be useful, the Markov chain must be ergodic in the following sense:
         $$\lim_{N\rightarrow\infty}\frac{1}{N}\sum_{i=1}^{N}f(\vec{x}^{(i)})=\int_{\vec{x}\in\mathcal{V}} f(\vec{x})p(\vec{x})$$</li>
-      <li>That is, the stationary distribution of the chain must match $p(\vec{x})$. Thus, the transition probabilities must be chosen so that they do not perturb the stationary distribution.</li>
-      <li>One way to achieve this is to use a sequence of transition functions which sample individual elements of the state vector from the conditional distributions $p(x_k|\vec{x}_{-k})$.</li>
-      <li>This is possible only when these conditional probabilities are known.</li>
+      <li class="fragment">That is, the stationary distribution of the chain must match $p(\vec{x})$. Thus, the transition probabilities must be chosen so that they do not perturb the stationary distribution.</li>
+      <li class="fragment">One way to achieve this is to use a sequence of transition functions which sample individual elements of the state vector from the conditional distributions $p(x_k|\vec{x}_{-k})$.</li>
+      <li class="fragment">This is possible only when these conditional probabilities are known.</li>
     </ul>
   </section>
 
@@ -207,8 +216,8 @@ layout: lecture
       <li>Suppose instead that we have the following transition probability:
         $$Q(\vec{x}'|\vec{x})=\alpha(\vec{x}',\vec{x})q(\vec{x}'|\vec{x}) + \delta(\vec{x}'-\vec{x})(1-\int_{\vec{y}\in\mathcal{V}}\alpha(\vec{y},\vec{x})q(\vec{y}|\vec{x}))$$
       </li>
-      <li>Here $q(\vec{x}'|\vec{x})$ is an arbitrary transition probability distribution (as long as ergodicity is satisfiable) and $\alpha(\vec{x}',\vec{x})$ is the <i>acceptance probability</i>.</li>
-      <li>Assuming that the stationary distribution of the chain satisfies detailed balance allows us to write
+      <li class="fragment">Here $q(\vec{x}'|\vec{x})$ is an arbitrary transition probability distribution (as long as ergodicity is satisfiable) and $\alpha(\vec{x}',\vec{x})$ is the <i>acceptance probability</i>.</li>
+      <li class="fragment">Assuming that the stationary distribution of the chain satisfies detailed balance allows us to write
         $$p(\vec{x})Q(\vec{x}'|\vec{x}) = p(\vec{x}')Q(\vec{x}|\vec{x}')$$</li>
     </ul>
   </section>
@@ -220,16 +229,16 @@ layout: lecture
 
         $$\alpha(\vec{x}',\vec{x})=1\wedge\frac{p(\vec{x}')}{p(\vec{x})}\cdot\frac{q(\vec{x}|\vec{x}')}{q(\vec{x}'|\vec{x})}$$
       </li>
-      <li>The ratio $q(\vec{x}|\vec{x}')/q(\vec{x}'|\vec{x})$ is known
+      <li class="fragment">The ratio $q(\vec{x}|\vec{x}')/q(\vec{x}'|\vec{x})$ is known
         as the Hastings ratio, and accounts for asymmetry in the
         proposal distribution.</li>
-      <li>This isn't the only possibility for $\alpha$:
+      <li class="fragment">This isn't the only possibility for $\alpha$:
         <ul>
-          <li>It's possible to find Markov chains with the
+          <li class="fragment">It's possible to find Markov chains with the
           transition probability given that have $p(\vec{x})$ as a
           stationary distribution but which violate detailed
           balance.</li>
-          <li>It's also possible to find $\alpha$ such that both
+          <li class="fragment">It's also possible to find $\alpha$ such that both
           $\alpha(\vec{x}',\vec{x})$ and $\alpha(\vec{x},\vec{x}')$ are
           $<1$: although this would be silly. (Why?)</li>
         </ul>
@@ -245,13 +254,13 @@ layout: lecture
     <blockquote>
 
       <ol class="spaced">
-        <li>Set $\vec{x}$ to an arbitrary initial state.</li>
-        <li>Sample $\vec{x}'$ from a proposal distribution $q(\vec{x'}|\vec{x})$</li>
-        <li>Evaluate the acceptance probability $\alpha(\vec{x}',\vec{x})$</li>
-        <li>Sample $u\sim\text{Unif}(0,1)$.</li>
-        <li>If $u&lt;\alpha(\vec{x}',\vec{x})$ then set $\vec{x}'\leftarrow\vec{x}$.</li>
-        <li>Log $\vec{x}$ to file.</li>
-        <li>Go to 2 (until the heat death of the universe).</li>
+        <li class="fragment">Set $\vec{x}$ to an arbitrary initial state.</li>
+        <li class="fragment">Sample $\vec{x}'$ from a proposal distribution $q(\vec{x'}|\vec{x})$</li>
+        <li class="fragment">Evaluate the acceptance probability $\alpha(\vec{x}',\vec{x})$</li>
+        <li class="fragment">Sample $u\sim\text{Unif}(0,1)$.</li>
+        <li class="fragment">If $u&lt;\alpha(\vec{x}',\vec{x})$ then set $\vec{x}'\leftarrow\vec{x}$.</li>
+        <li class="fragment">Log $\vec{x}$ to file.</li>
+        <li class="fragment">Go to 2 (until the heat death of the universe).</li>
       </ol>
     </blockquote>
     
@@ -281,12 +290,18 @@ layout: lecture
     <h2>Implementation example</h2>
 
     <div id="mcmcTrace" style="width:100%"> </div>
+    <div style="text-align:right;font-size:0.5em">
+      <a href="#" onclick="generateTraces(); return false;">Regenerate</a>
+    </div>
   </section>
 
    <section>
     <h2>Implementation example</h2>
 
     <div id="mcmcDensity" style="width:100%"> </div>
+    <div style="text-align:right;font-size:0.5em;margin-top:-1em">
+      <a href="#" onclick="generateTraces(); return false;">Regenerate</a>
+    </div>
   </section>
   
   <section>
@@ -313,7 +328,9 @@ layout: lecture
       <div style="display:inline-block;width:20%" id="mcmcDensity_w3"></div>
     </div>
     </div>
-    <script src="plot_mcmcExamples.js"> </script>
+    <div style="text-align:right;font-size:0.5em;margin-top:-1em">
+      <a href="#" onclick="generateTraces(); return false;">Regenerate</a>
+    </div>
   </section>
 
   <section>
@@ -325,9 +342,9 @@ layout: lecture
     <img style="float:right;width:45%" data-src="MCMC_convergence_testing.png">
     <div style="width:50%;">
     <ul>
-      <li>Chains can be run in parallel.</li>
-      <li>Resulting sample distributions can be compared using (for example) Q-Q plots.</li>
-      <li>Once convergence is attained, combining the results of
+      <li class="fragment">Chains can be run in parallel.</li>
+      <li class="fragment">Resulting sample distributions can be compared using (for example) Q-Q plots.</li>
+      <li class="fragment">Once convergence is attained, combining the results of
         multiple chains is perfectly acceptable.</li>
       </ul>
     </div>
@@ -351,14 +368,14 @@ layout: lecture
       vicinity of 0 is the gap between effectively independent
       samples, $\tau$.</p>
 
-    <p>If $N$ is the total number of MCMC samples, we then define
+    <p class="fragment">If $N$ is the total number of MCMC samples, we then define
     $$N_{\text{eff}}=\frac{N}{\tau}$$
     to be the <b>effective sample size</b> (ESS).</p>
 
-    <p>The ESS is a rough <i>estimate</i> of the number of actual
+    <p class="fragment">The ESS is a rough <i>estimate</i> of the number of actual
       samples a chain has generated.</p>
 
-    <blockquote>You should really only
+    <blockquote class="fragment">You should really only
       consider the order of magnitude of the ESS.</blockquote>
   </section>
 
@@ -367,10 +384,10 @@ layout: lecture
 
     <ul>
       <li>MCMC is usually applied to posteriors with large numbers of dimensions.</li>
-      <li>This is precisely the regime in which MCMC shines.</li>
-      <li>A typical phylogenetic analysis (as we'll see later) may contain many hundreds
+      <li class="fragment">This is precisely the regime in which MCMC shines.</li>
+      <li class="fragment">A typical phylogenetic analysis (as we'll see later) may contain many hundreds
         of distinct parameters.</li>
-      <li>How do we develop algorithms to sample from posteriors over
+      <li class="fragment">How do we develop algorithms to sample from posteriors over
       these parameter spaces?</li>
     </ul>
   </section>
@@ -382,12 +399,12 @@ layout: lecture
       $$q(\vec{x}'|\vec{x})=\sum_j w_j q_j(\vec{x}'|\vec{x})$$</p>
 
     <ul>
-      <li>Individual proposal functions $q_j(\vec{x}'|\vec{x})$ are
+      <li class="fragment">Individual proposal functions $q_j(\vec{x}'|\vec{x})$ are
       sometimes called "operators", and the $w_j$ are called
       "weights".</li>
-      <li>Individual operators are often constructed to be reversible:
+      <li class="fragment">Individual operators are often constructed to be reversible:
       i.e. maintain detailed balance.</li>
-      <li>However, individual operators are usually incapable of
+      <li class="fragment">However, individual operators are usually incapable of
       producing an ergodic chain on their own. (I.e. they may not be
       capable of exploring the entire support of the posterior.)</li>
     </ul>
@@ -400,8 +417,8 @@ layout: lecture
     <div>
     <div id="targetDensity2d" style="margin:auto;width:70%;margin-bottom:0"></div>
     </div>
-    <script src="plot_2dExamples.js"></script>
 
+    <div class="fragment">
     <p style="margin-top:0em">These proposal operators are sufficient for ergodicity:</p>
       $q_1(\vec{x'}|\vec{x})=\delta(x_2'-x_2)g(x_1'|x_1)$, 
       $q_2(\vec{x'}|\vec{x})=\delta(x_1'-x_1)g(x_2'|x_2)$
@@ -412,6 +429,9 @@ layout: lecture
     <h2>Example (continued)</h2>
 
     <div id="mcmcTrace2dFirstTry" style="margin:auto;width:80%"></div>
+    <div style="text-align:right;font-size:0.5em;margin-top:-1em">
+      <a href="#" onclick="generate2dTraces(); return false;">Regenerate</a>
+    </div>
   </section>
 
   <section>
@@ -420,12 +440,12 @@ layout: lecture
     <ul>
       <li>Chain is mixing slowly because of strong correlations between the two
         parameters.</li>
-      <li>Solution is to update both parameters simultaneously.</li>
-      <li>Anticipating correlations between parameters is a key skill in designing efficient MCMC algorithms.</li>
-      <li>In the Bayesian context, this often requires careful examination of the likelihood: non-identifiability is a source of such correlations.</li>
+      <li class="fragment">Solution is to update both parameters simultaneously.</li>
+      <li class="fragment">Anticipating correlations between parameters is a key skill in designing efficient MCMC algorithms.</li>
+      <li class="fragment">In the Bayesian context, this often requires careful examination of the likelihood: non-identifiability is a source of such correlations.</li>
     </ul>
-    <p>Include a third proposal operator:</p>
-      $$q_3(\vec{x}'|\vec{x}) = \frac{1}{v}\int_{-v/2}^{v/2}\delta(x_1'-(x_1+a))\delta(x_2'-(x_2+a))\mathrm{d}a$$
+    <p class="fragment">Include a third proposal operator:
+      $$q_3(\vec{x}'|\vec{x}) = \frac{1}{v}\int_{-v/2}^{v/2}\delta(x_1'-(x_1+a))\delta(x_2'-(x_2+a))\mathrm{d}a$$</p>
 
   </section>
 
@@ -433,6 +453,9 @@ layout: lecture
     <h2>Mixing improvement with new operator</h2>
 
     <div id="mcmcTrace2dBetter" style="margin:auto;width:80%"></div>
+    <div style="text-align:right;font-size:0.5em;margin-top:-1em">
+      <a href="#" onclick="generate2dTraces(); return false;">Regenerate</a>
+    </div>
   </section>
 
   <section>
@@ -447,7 +470,7 @@ layout: lecture
         \dot{q}_i &= \frac{\partial H}{\partial p_i}\\
         \dot{p}_i &= -\frac{\partial H}{\partial q_i}
         \end{align}
-      <li> Hamiltonian (/hybrid) Monte Carlo is an MCMC algorithm that
+      <li class="fragment"> Hamiltonian (/hybrid) Monte Carlo is an MCMC algorithm that
       treats the parameter state vector as the position component of
       canonical coordinates in phase space.</li>
     </ul>
@@ -460,10 +483,10 @@ layout: lecture
       <li>HMC assumes that the system is in thermal contact
         with a heat bath of fixed temperature ("canonical ensemble"): </li>
     </ul>
-    <img data-src="canonical_ensemble.svg" style="width:25%">
+    <img class="fragment" data-src="canonical_ensemble.svg" style="width:25%">
 
     <ul>
-      <li>The finite temperature means that the probability of observing the system in an accessible state $(\vec{q},\vec{p})$ is
+      <li class="fragment">The finite temperature means that the probability of observing the system in an accessible state $(\vec{q},\vec{p})$ is
     $$P(\vec{q},\vec{p}) = \frac{1}{Z}e^{-H(\vec{q},\vec{p})/T}$$
     where $Z=\sum_{\vec{q},\vec{p}}e^{-H(\vec{q},\vec{p})/T}$ is the partition function.</li>
     </ul>
@@ -475,16 +498,16 @@ layout: lecture
     <ul>
       <li>Note that the probability distribution factorizes
         $$P(\vec{q},\vec{p})=Z^{-1}\exp[-(K(\vec{p})+V(\vec{q}))/T]=P(\vec{q})P(\vec{p})$$</li>
-      <li>The MCMC method involves identifying the position coordinates $\vec{q}$ with the variables ($\vec{x}$) of interest , and defining  $V(\vec{q})$ such that $P(\vec{q})$ is the target density, i.e.
+      <li class="fragment">The MCMC method involves identifying the position coordinates $\vec{q}$ with the variables ($\vec{x}$) of interest , and defining  $V(\vec{q})$ such that $P(\vec{q})$ is the target density, i.e.
         $$V(\vec{q}) = -T\log[ZP(\vec{q})]$$</li>
-      <li>The actual update step for the algorithm involves:
+      <li class="fragment">The actual update step for the algorithm involves:
         <ol>
-          <li>Sampling a new $\vec{p}^*$ from $P(\vec{p})$ (easy,
+          <li class="fragment">Sampling a new $\vec{p}^*$ from $P(\vec{p})$ (easy,
           since $K(\vec{p})$ is quadratic and hence $P(\vec{p})$ is
           Gaussian,</li>
-          <li>Evolving the state using Hamiltons equations from
+          <li class="fragment">Evolving the state using Hamiltons equations from
           $(\vec{q},\vec{p}^*)$ to $(\vec{q}',\vec{p}')$.</li>
-          <li>Performing an MCMC accept/reject for this new state
+          <li class="fragment">Performing an MCMC accept/reject for this new state
           compared to the original state $(\vec{q},\vec{p})$.</li>
       </ol></li>
     </ul>
@@ -515,9 +538,9 @@ layout: lecture
       <li>Suppose we have a posterior density of the form:
         $$P(\vec{x}_k,k) = \sum_{k}Pf(\vec{x_k}|k)P(k)$$
         where the dimension of $\vec{x}_k$ depends on $k$.</li>
-      <li>"The number of things you don't know is one of the things you don't know."</li>
-      <li>This is a straight-forward way of dealing with model selection. (In fact, model selection and parameter inference are essentially the same thing...)</li>
-      <li>Can we still use MCMC to sample from this distribution?</li>
+      <li class="fragment">"The number of things you don't know is one of the things you don't know."</li>
+      <li class="fragment">This is a straight-forward way of dealing with model selection. (In fact, model selection and parameter inference are essentially the same thing...)</li>
+      <li class="fragment">Can we still use MCMC to sample from this distribution?</li>
     </ul>
   </section>
 
@@ -533,11 +556,13 @@ layout: lecture
     <p>Use the following form of the detailed balance criterion:</p>
     $$\int_{\vec{x}_A\in A}\int_{\vec{x}'_B\in B} P(\vec{x}_A)Q(\vec{x}'_B|\vec{x}_A) =
     \int_{\vec{x}_B\in B} \int_{\vec{x}'_A\in A} P(\vec{x}_B)Q(\vec{x}'_A|\vec{x}_B)$$
-    <p>Here $A$ and $B$ are any two subsets of the state space, while $Q(\vec{x}'|\vec{x})$ is the MCMC transition kernel:</p>
-        $$Q(\vec{x}'|\vec{x})=\alpha(\vec{x}',\vec{x})q(\vec{x}'|\vec{x}) + \delta(\vec{x}'-\vec{x})(1-\int_{\vec{y}\in\mathcal{V}}\alpha(\vec{y},\vec{x})q(\vec{y}|\vec{x}))$$
-    <p>The DB criterion then reduces to</p>
+    <p class="fragment">Here $A$ and $B$ are any two subsets of the state space, while $Q(\vec{x}'|\vec{x})$ is the MCMC transition kernel:
+        $$Q(\vec{x}'|\vec{x})=\alpha(\vec{x}',\vec{x})q(\vec{x}'|\vec{x}) + \delta(\vec{x}'-\vec{x})(1-\int_{\vec{y}\in\mathcal{V}}\alpha(\vec{y},\vec{x})q(\vec{y}|\vec{x}))$$</p>
+    <div class="fragment">
+    <p>The DB criterion then reduces to:</p>
     <div style="font-size:0.8em">$$\int_{\vec{x}_A\in A}\int_{\vec{x}'_B\in B} P(\vec{x}_A)\alpha(\vec{x}'_B,\vec{x}_A)q(\vec{x}'_B|\vec{x}_A) =
     \int_{\vec{x}_B\in B} \int_{\vec{x}'_A\in A} P(\vec{x}_B)\alpha(\vec{x}'_A,\vec{x}_B)q(\vec{x}'_A|\vec{x}_B)$$
+    </div>
     </div>
   </section>
 
@@ -549,11 +574,11 @@ layout: lecture
     </div>
 
     <ul>
-      <li>Deriving an acceptance probability from the above criterion is guaranteed to produce a chain that converges to the correct distribution (assuming your proposal is capable of exploring the state space, of course).</li>
-      <li>For the most part,
+      <li class="fragment">Deriving an acceptance probability from the above criterion is guaranteed to produce a chain that converges to the correct distribution (assuming your proposal is capable of exploring the state space, of course).</li>
+      <li class="fragment">For the most part,
         $$\alpha(\vec{x}',\vec{x}) = 1\wedge \frac{P(\vec{x}')}{P(\vec{x})}\times\frac{q(\vec{x}|\vec{x}')}{q(\vec{x}'|\vec{x})}$$
         just works.</li>
-      <li>In the case that proposals contain singularities (occasionally the case for model switching), the safest thing is to back up and derive $\alpha(\vec{x}',\vec{x})$ from the criterion directly.</li>
+      <li class="fragment">In the case that proposals contain singularities (occasionally the case for model switching), the safest thing is to back up and derive $\alpha(\vec{x}',\vec{x})$ from the criterion directly.</li>
       </ul>
   </section>
 
@@ -562,10 +587,10 @@ layout: lecture
 
     <ul>
       <li>Consider a proposal involving choosing $f\sim\text{Unif}(1/\beta,\beta$ then setting $\vec{x}'=f\vec{x}$.</li>
-      <li>The proposal function for this move is:
+      <li class="fragment">The proposal function for this move is:
         $$q(\vec{x}'|\vec{x})=\frac{1}{\beta-\beta^{-1}}\int_{\beta^{-1}}^{\beta}\mathrm{d}f\delta(\vec{x}'-f\vec{x})$$</li>
-      <li> This does not involve a dimension change. However, due to the singularity it is easiest to derive the acceptance probability for the move from the DB criterion directly.</li>
-      <li>The $\alpha$ for other proposals which <b>do</b> involve a dimension change can often be derived simply by substituting the proposal densities directly into the usual expression.</li>
+      <li class="fragment"> This does not involve a dimension change. However, due to the singularity it is easiest to derive the acceptance probability for the move from the DB criterion directly.</li>
+      <li class="fragment">The $\alpha$ for other proposals which <b>do</b> involve a dimension change can often be derived simply by substituting the proposal densities directly into the usual expression.</li>
         
   </section>
 
@@ -574,9 +599,9 @@ layout: lecture
 
     <ul class="spaced" style="margin-top:5%">
       <li>One often hears "reversible jump" mentioned in hushed tones.</li>
-      <li>However, as long as you use the generalized detailed balance criterion, you won't go wrong.</li>
+      <li class="fragment">However, as long as you use the generalized detailed balance criterion, you won't go wrong.</li>
       </ul>
-    <p style="text-align:center; font-size:2em; font-weight:bold; margin-top:5%">DON'T PANIC!</p>
+    <p class="fragment" style="text-align:center; font-size:2em; font-weight:bold; margin-top:5%">DON'T PANIC!</p>
   </section>
 </section>
 
@@ -589,12 +614,12 @@ layout: lecture
   <section>
     <h2>The Marginal Likelihood</h2>
     <ul>
-      <li>The posterior for parameters $\vec{\theta}_M$ of model $M$ given data $\vec{d}$ is:
+      <li class="fragment">The posterior for parameters $\vec{\theta}_M$ of model $M$ given data $\vec{d}$ is:
         $$P(\vec{\theta}_M = \frac{P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)}{P(\vec{d}|M)}$$</li>
-      <li>The troublesome denominator
+      <li class="fragment">The troublesome denominator
         $$P(\vec{d}|M)=\sum_{\vec{\theta}_M}P(\vec{d}|\vec{\theta}_M,M)P(\vec{\theta}_M|M)$$
         is the likelihood (or marginal likelihood) for $M$ given the data.</li>
-      <li>This function is central to Bayesian model selection:
+      <li class="fragment">This function is central to Bayesian model selection:
         <div style="font-size:0.8em">
         \begin{align}
         \frac{P(M_1|\vec{d})}{P(M_2|\vec{d})}&=\frac{P(M_1|\vec{d})P(M_1)}{P(M_2|\vec{d})P(M_2)}\\
@@ -609,12 +634,12 @@ layout: lecture
     <h2>Bayesian Occam's Razor</h2>
     <p>Interestingly, the marginal likelihood (aka the "evidence") for a model automatically penalizes against overfitting:</p>
 
-    <div class="figure">
+    <div class="figure fragment">
       <img data-src="occam.svg" style="width:80%">
       <div class="cite" style="text-align:right">Idea due to MacKay, 2003</div>
     </div>
 
-      <p style="text-align:center;font-style:italic">But how can we compute it?</p>
+      <p class="fragment" style="text-align:center;font-style:italic">But how can we compute it?</p>
   </section>
 
   <section>

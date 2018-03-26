@@ -1,3 +1,5 @@
+var generate2dTraces;
+
 $(document).ready(function() {
 
     function targetDensity(x,y) {
@@ -52,101 +54,106 @@ $(document).ready(function() {
     Plotly.newPlot('targetDensity2d', [truth], layout, {displayModeBar: false});
 
 
-    // MCMC
-    function doMCMC(targetDensity, proposal, N, x0, y0) {
+    generate2dTraces = function() {
+
+        // MCMC
+        function doMCMC(targetDensity, proposal, N, x0, y0) {
 
 
-        var x = [x0];
-        var y = [y0];
-        var currentP = targetDensity(x0, y0);
+            var x = [x0];
+            var y = [y0];
+            var currentP = targetDensity(x0, y0);
 
-        for (var iter=1; iter<N; iter+=1) {
-            prime = proposal(x[iter-1], y[iter-1])
+            for (var iter=1; iter<N; iter+=1) {
+                prime = proposal(x[iter-1], y[iter-1])
 
-            var newP = targetDensity(prime.x, prime.y);
+                var newP = targetDensity(prime.x, prime.y);
 
-            var alpha = newP/currentP;
+                var alpha = newP/currentP;
 
-            if (alpha>1 || Math.random()<alpha) {
-                x.push(prime.x)
-                y.push(prime.y)
-                currentP = newP;
-            } else {
-                x.push(x[iter-1]);
-                y.push(y[iter-1]);
-            }
-        }
-
-        return({x: x, y: y,
-                mode: 'markers+lines',
-                type: 'scatter'})
-    }
-
-    function makeProposal(w) {
-        return function(x, y) {
-            var xp, yp;
-
-            if (Math.random()<0.5) {
-                xp = x + w*(Math.random()-0.5);
-                yp = y;
-            } else {
-                xp = x;
-                yp = y + w*(Math.random()-0.5);
-            }
-
-            return {x: xp, y: yp}
-        }
-    }
-
-    var mcmcTrace = doMCMC(targetDensity, makeProposal(2), 200, 2,-2);
-
-    var traceLayout =  {
-        width: 800,
-        height: 600,
-        margin: {
-            t:10,b:40
-        },
-        xaxis: {title: "x1"},
-        yaxis: {title: "x2"},
-    };
-
-    // Need to create new object here for some reason
-    truth = {
-        x: xvec,
-        y: yvec,
-        z: zmat,
-        type: 'contour',
-        contours: {coloring: 'heatmap'},
-        showscale: false
-    }
-
-    Plotly.plot("mcmcTrace2dFirstTry", [truth, mcmcTrace], traceLayout, {displayModeBar: false});
-
-
-    function makeBetterProposal(w,v) {
-        return function(x, y) {
-            var xp, yp;
-
-            var u = Math.random();
-
-            if (u < 1/3) {
-                xp = x + w*(Math.random()-0.5);
-                yp = y;
-            } else {
-                if (u < 2/3) {
-                    xp = x;
-                    yp = y + w*(Math.random()-0.5);
+                if (alpha>1 || Math.random()<alpha) {
+                    x.push(prime.x)
+                    y.push(prime.y)
+                    currentP = newP;
                 } else {
-                    a = v*(Math.random()-0.5);
-                    xp = x + a;
-                    yp = y + a;
+                    x.push(x[iter-1]);
+                    y.push(y[iter-1]);
                 }
             }
 
-            return {x: xp, y: yp}
+            return({x: x, y: y,
+                    mode: 'markers+lines',
+                    type: 'scatter'})
         }
+
+        function makeProposal(w) {
+            return function(x, y) {
+                var xp, yp;
+
+                if (Math.random()<0.5) {
+                    xp = x + w*(Math.random()-0.5);
+                    yp = y;
+                } else {
+                    xp = x;
+                    yp = y + w*(Math.random()-0.5);
+                }
+
+                return {x: xp, y: yp}
+            }
+        }
+
+        var mcmcTrace = doMCMC(targetDensity, makeProposal(2), 200, 2,-2);
+
+        var traceLayout =  {
+            width: 800,
+            height: 600,
+            margin: {
+                t:10,b:40
+            },
+            xaxis: {title: "x1"},
+            yaxis: {title: "x2"},
+        };
+
+        // Need to create new object here for some reason
+        truth = {
+            x: xvec,
+            y: yvec,
+            z: zmat,
+            type: 'contour',
+            contours: {coloring: 'heatmap'},
+            showscale: false
+        }
+
+        Plotly.newPlot("mcmcTrace2dFirstTry", [truth, mcmcTrace], traceLayout, {displayModeBar: false});
+
+
+        function makeBetterProposal(w,v) {
+            return function(x, y) {
+                var xp, yp;
+
+                var u = Math.random();
+
+                if (u < 1/3) {
+                    xp = x + w*(Math.random()-0.5);
+                    yp = y;
+                } else {
+                    if (u < 2/3) {
+                        xp = x;
+                        yp = y + w*(Math.random()-0.5);
+                    } else {
+                        a = v*(Math.random()-0.5);
+                        xp = x + a;
+                        yp = y + a;
+                    }
+                }
+
+                return {x: xp, y: yp}
+            }
+        }
+
+        var mcmcTrace2 = doMCMC(targetDensity, makeBetterProposal(2,2), 200, 2,-2);
+        Plotly.newPlot("mcmcTrace2dBetter", [truth, mcmcTrace2], traceLayout, {displayModeBar: false});
     }
 
-    var mcmcTrace2 = doMCMC(targetDensity, makeBetterProposal(2,2), 200, 2,-2);
-    Plotly.plot("mcmcTrace2dBetter", [truth, mcmcTrace2], traceLayout, {displayModeBar: false});
+    generate2dTraces();
 });
