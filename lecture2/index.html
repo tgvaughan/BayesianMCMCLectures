@@ -1,5 +1,307 @@
 ---
 title: Bayesian inference using Markov chain Monte Carlo
-subtitle: "Part 1: Phylogenetics model case studies"
+subtitle: "Part 2: Case studies from Phylogenetics"
 layout: lecture
 ---
+
+<section>
+  <section class="center">
+    <h1>Bayesian Phylogenetic Inference</h1>
+  </section>
+
+  <section>
+    <h2>The Phylogenetic Likelihood</h2>
+
+    <blockquote style="font-size:2em;">
+      $$P(A|T, \mu)$$
+    </blockquote>
+
+    <ul>
+      <li>$A$ is a multiple sequence alignment of $n$ sequences,</li>
+      <li>$T$ is a phylogenetic tree with $n$ leaves, and</li>
+      <li>$\mu$ are the parameters of the chosen CTMC-based model of sequence evolution.</li>
+      <li>Just a product of site pattern propabilities: note the obvious
+        generalizations to multiple alignments that share a tree, or to phylogenetic networks that allow
+        different sites to evolve under distinct "local" trees.</li>
+    </ul>
+
+    <p><i>We're Bayesians: we need a probability distribution for $T$!</i></p>
+  </section>
+
+  <section>
+    <h2>The Phylogenetic Posterior</h2>
+
+    <blockquote style="margin-top:10%;font-size:1em">
+      $$P(T,\mu,\theta|A) = \frac{1}{P(A)}P(A|T,\mu)P(T|\theta)P(\mu,\theta)$$
+    </blockquote>
+
+    <ul style="width:80%; margin-top:1em">
+      <li>$P(T|\theta)$ is the "tree prior" parameterized by $\theta$.</li>
+      <li>$P(\mu,\theta)$ are the parameter priors.</li>
+    </ul>
+
+    <div class="textbox" style="margin-top:2em;width:80%;text-align:center;margin-left:10%">
+      <div class="title">Questions</div>
+      <ul>
+        <li>What is $P(A)$?</li>
+        <li>Is the tree prior really a prior? (I.e. does it depend on the data?)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>The Neutrality Assumption</h2>
+
+    <p>Because of the way we've factorized the joint probability for the data and model parameters, we
+      are implicitly assuming that our alignment could have been produced in the following fashion:</p>
+
+    <div style="width:100%; height:350px; position:relative">
+      <img class="fragment" data-src="neutrality1.svg" style="position:absolute;top:0;left:0;width:1000px">
+      <img class="fragment" data-src="neutrality2.svg" style="position:absolute;top:0;left:0;width:1000px;background-color:white">
+      <img class="fragment" data-src="neutrality3.svg" style="position:absolute;top:0;left:0;width:1000px;background-color:white">
+    </div>
+
+    <p class="fragment">Separating the process of tree generation from that of
+      sequence evolution implies neutrality.</p>
+  </section>
+
+
+  <section>
+    <h2>Tree Priors</h2>
+
+    <div style="width:100%">
+      <div style="display:inline-block;vertical-align:middle;width:69%">
+        <ul>
+          <li>Tree priors allow us to specify a generative model for the genealogy.</li>
+          <li>While this model may not involve genetic evolution, it may depend on
+            speciation rates, population sizes, migration rates, etc. etc.</li>
+          <li>A huge fraction of phylogenetics inference research is focused on
+            developing and efficiently implementing tree priors!</li>
+        </ul>
+      </div>
+      <div style="display:inline-block;vertical-align:middle;width:30%">
+        <img data-src="SIRTree.svg" style="width:100%">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The Yule model for speciation</h2>
+
+    <ul>
+      <li>Simple model for speciation due to Yule (1924).</li>
+      <li>Constant rate branching process where
+        branching occurs uniformly across extant lineages
+        at a rate of $\lambda$ per lineage per unit time.</li>
+      <li>Number of lineages $k$ evolves under the following master equation:
+        $$\dot{p}(k,t) = \lambda (k-1)p(k-1,t) - \lambda k p(k,t)$$</li>
+      <li>Write this in chemical kinetics formalism:
+        $X \overset{\lambda}{\longrightarrow} 2X$</li>
+    </ul>
+
+    <img data-src="YuleTree.svg" style="width:100%">
+  </section>
+
+  <section>
+    <h2>Birth-death(-sampling) priors</h2>
+
+    <ul>
+      <li>Most of the recent groundwork on this is due to Tanja Stadler (ETH, Z&uuml;rich).</li>
+      <li>Generalization of Yule process to account for extinction and sampling.</li>
+      <li>Linear speciation, extinction and sampling rates.</li>
+      <li>Prior is over <i>sampled</i> trees: assumes unobserved full tree.</li>
+    </ul>
+
+    <img data-src="StadlerSTT.svg" style="width:80%">
+    <div style="text-align:right;font-size:0.8em">
+      <a class="cite" href="http://www.sciencedirect.com/science/article/pii/S0022519310004765">
+        Tanja Stadler, J. Theor. Biol., 2010</a></div>
+  </section>
+
+  <section>
+    <h2>Coalescent priors</h2>
+
+    <ul>
+      <li>Original theory due to Kingman (1980).</li>
+      <li>Model the shape of <b>gene trees</b> within a species.</li>
+      <li>Can be obtained as the limit of a number of population genetic models,
+        including the Wright-Fisher model and the Moran model.</li>
+      <li>Provide an important link between tree shape and population size!</li>
+    </ul>
+
+    <img data-src="MEPs.svg" style="width:85%">
+    <div style="text-align:right;font-size:0.8em">
+      <a class="cite" href="http://dx.doi.org/10.1016/S0169-5347(03)00216-7">Drummond et al., TIEE, 2003</a>
+  </section>
+
+  <section>
+    <h2>Multi-species coalescent priors</h2>
+    <ul>
+      <li>Hierarchical models that embed gene trees within species trees.</li>
+      <li>Species tree described using a birth-death prior.</li>
+      <li>Gene trees described by coalescent priors for populations which
+        subdivide at speciation events.</li>
+    </ul>
+
+    <img data-src="MSC.jpg" style="width:100%">
+    <div style="text-align:right;font-size:0.8em">
+      <a class="cite" href="https://frederikleliaert.wordpress.com/green-algae/dna-based-species-delimitation-in-algae/">Leliaert et al., Euro. J. Phycology, 2014</a>
+  </section>
+
+  <section>
+    <h2>MCMC in Tree Space</h2>
+
+    <blockquote>
+      Need to identify a set of proposals $q_j(x'|x)$ when $x$ is a point in
+      the space of rooted time trees.
+    </blockquote>
+
+    <img data-src="TreeOperators.svg" style="width:60%">
+  </section>
+
+  <section>
+    <h2>Stopping criteria</h2>
+
+    <blockquote>
+      <ol>
+        <li>How can we tell when a phylogenetic MCMC calculation has reached equilibrium?</li>
+        <li>How do we know when we've collected enough samples?</li>
+      </ol>
+    </blockquote>
+
+    <ul>
+      <li>One approach is to compute ESS (using empirical estimates of autocorrelation time) for each
+        parameter and a number of tree summary statistics (e.g. tree height and tree "length").
+        <ul>
+          <li>Assume that once all of these scores are sufficiently high
+            (e.g. &gt; 200) we have adequately sampled the posterior.</li>
+        </ul>
+      </li>
+      <li>Examine output of several independent (and independently
+        initialized chains. A necessary (not sufficient) condition for
+        convergence is that sample distributions converge as the chains
+        converge to equilibrium.
+        <ul>
+          <li><b>Always</b> do this!</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Are we there yet?</h2>
+
+    <p>The AWTY application applies a number of different statistics to assess
+      the convergence of the tree state.  <b>It relies heavily on comparing
+        the result of multiple runs.</b></p>
+
+    <img data-src="rwty.jpeg" style="width:100%">
+    <div style="text-align:right;font-size:0.8em"><a class="cite"href="https://doi.org/10.1093/bioinformatics/btm388">Nylander, et al., Bioinformatics, 2008</a></div>
+  </section>
+
+  <section>
+    <h2>Post-processing: Parameter samples</h2>
+    <p>Logs of individual parameters can be considered samples from the marginal posteriors of those parameters.</p>
+
+    <img data-src="tracer.png" style="width:80%;margin-top:0">
+  </section>
+
+  <section>
+    <h2>Post-processing: Tree samples</h2>
+
+    <ul>
+      <li>Summary statistics (e.g. age of the MRCA of a pair of taxa) can be
+        computed and their marginal distributions assessed.</li>
+      <li>A number of different approaches can be used to produce a "summary" tree meant
+        to represent the best guess at the true tree.  (None of these algorithms are perfect!!)</il>
+</ul>
+
+<dl>
+  <dt>Strict consensus</dt>
+  <dd>Include only clades that appear in ALL sampled trees.</dd>
+  <dt>Majority rule consensus</dt>
+  <dd>Include clades that appear in &gt;50% of the sampled trees.</dd>
+  <dt>Maximum clade credibility tree</dt>
+  <dd>The sampled topology for which the product of the posterior clade probabilities is maximized.</dd>
+</dl>
+
+<blockquote>
+  In BEAST, summary trees are produced using the MCC tree method via the  program <b>TreeAnnotator</b>.
+</blockquote>
+
+</section>
+
+
+<section>
+  <h2>Bayesian Phylogenetic Inference Software</h2>
+
+  <p>Popular Bayesian  phyogenetic inference software:</p>
+  <dl>
+    <dt>MrBayes (Huelsenbeck and Ronquist, Bioinformatics, 2001)</dt>
+    <dd>Early CLI program for phylogenetic inference.</dd>
+    <dt>RevBayes (H&ouml;hna et al., Syst. Biol., 2016)</dt>
+    <dd>R-like syntax for specifying phylogenetic models.</dd>
+    <dt>BEAST/BEAST2 (Drummond and Rambaut, 2007; Bouckaert et al., 2014) </dt>
+    <dd>XML specification of phylogenetic models.  Extensible.</dd>
+  </dl>
+
+  <p>Some software implementing special models:</p>
+  <dl>
+    <dt>MIGRATE</dt>
+    <dd>Performs inference under the Structured Coalescent. (I.e. subpopulation sizes, migration rates, ancestral locations.)</dd>
+
+    <dt>ClonalFrame/ClonalOrigin</dt>
+    <dd>Infer bacterial Ancestral Recombination Graphs (generalizations of trees when recombination is present).</dd>
+  </dl>
+
+  <p><i>... there are many others!</i></p>
+</section>
+
+<section>
+  <h2>Summary</h2>
+
+  <ul>
+    <li>Bayesian phylogenetic inference is generally done by adding a tree
+      prior to the tree likelihood. This implicitly assumes neutral
+      evolution.</li>
+    <li>Tree priors link the shape of the tree to parameters such as
+      speciation rates, extinction rates, sampling rates, population
+      sizes and migration rates.</li>
+    <li>Development of these priors is a particularly rich area of current
+      research.</li>
+    <li>Due to the immense size of the state spaces involved and the use of
+      distributions which are analytically intractable, almost all
+      Bayesian phylogenetic inference uses MCMC.</li>
+    <li>Deciding on stopping criteria is difficult.  Many necessary
+      requirements for convergence, but no sufficient requirements!</li>
+    <li>Methods for summarizing sampled tree distributions exist, but may
+      be misleading. At the moment, sticking to summary statistics for
+      particular characteristics of interest is the only safe
+      option.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Recommended Reading</h2>
+
+  <div class="figure" style="display:inline-block;height:400px;margin-top:2em">
+    <img data-src="InferringPhylogenies.jpg">
+  </div>
+
+  <div class="figure" style="display:inline-block;height:400px;margin-left:2em;margin-top:2em">
+    <img data-src="beast_book_cover.jpeg">
+  </div>
+</section>
+
+</section>
+
+
+<!--
+    1. Bayesian phylogenetic inference in BEAST
+    
+    2. Coloured tree inference
+
+    3. Phylogenetic network inference
+
+    4. Population dynamics inference using particle filtering
+-->

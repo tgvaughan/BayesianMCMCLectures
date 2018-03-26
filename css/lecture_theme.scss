@@ -14,12 +14,13 @@
 $backgroundColor: #fff;
 $themeColor: darkred;
 $citeColor: darkblue;
+$alertColor: darkorange;
 
 $mainColor: #222;
 $headingColor: $backgroundColor;
 $headingBackgroundColor: $themeColor;
 
-$mainFontSize: 35px;
+$mainFontSize: 30px;
 $mainFont: 'Source Sans Pro', Helvetica, sans-serif;
 $headingFont: 'Source Sans Pro', Helvetica, sans-serif;
 $headingTextShadow: none;
@@ -97,4 +98,23 @@ div.figure > .cite {
 .reveal blockquote {
     font-style: normal;
     font-size: 0.9em;
+}
+
+// Text box
+.reveal div.textbox {
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    padding: 5px;
+}
+
+.reveal div.textbox > .title {
+    margin-bottom: 10px;
+    padding-left: 0.5em;
+    background: $themeColor;
+    color: $backgroundColor;
+}
+
+div.textbox.alert > .title {
+    background: $alertColor;
+    color: $backgroundColor;
 }
