@@ -10,6 +10,550 @@ layout: lecture
   </section>
 
   <section>
+    <h2>Modelling genetic change</h2>
+
+    <ul class="spaced" style="width:80%;margin-top:5%">
+      <li>Given two or more aligned nucleoide or amino acid sequences,
+        usually the firs goal is to calculate some measure of sequence
+        similarity (or conversely distance).</li>
+
+      <li>The easiest distance to compute is the <b>p-distance</b>: the number of
+        differences between two aligned sequences relative to their length.
+        <ul>
+          <li>The p-distance is the <b>Hamming distance</b> normalized by the
+            length of the sequence.  Therefore it is the proportion of positions
+            at which the sites differ.</li>
+          <li>The p-distance can also be considered the probability that the two
+            sequences differ at a random site.</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Modelling genetic change</h2>
+
+    <img data-src="pdist.svg" style="width:80%;margin-top:2em">
+  </section>
+
+  <section>
+    <h2>p-distance</h2>
+
+    <div style="width:100%; margin-top:10%">
+      <img data-src="pdist2.svg" style="vertical-align:middle;width:30%">
+      <div style="width: 40%;display:inline-block">
+        $p$-distance = 3/7 $\simeq 0.43$.
+      </div>
+    </div>
+
+    <ul class="spaced" style="width:80%;margin-top:2em">
+      <li>Proportion of differences between two sequences.</li>
+      <li>Usually <b>understimates</b> the true distance: <b>genetic</b> (or <b>evolutionary</b>) <b>distance</b> $d$.</li>
+    </ul>
+  </section>
+
+  <section>
+        <h2>Multiple, parallel and back-substitutions</h2>
+
+        <img data-src="pdist3.svg" style="width:80%">
+    </section>
+
+    <section>
+        <h2>Relationship between $p$-distance and genetic distance</h2>
+        <div id="pdistOutput" style="width:1000px;height:600px;margin-top:2em">
+        <script>
+
+            var trace1 = { x: [], y: [],
+                mode: 'lines',
+                name: '',
+                line: {
+                    width: 4,
+                    dash: 'solid'
+                }
+            };
+
+            var trace2 = {x: [], y: [], mode: 'lines', name: '',
+                line: { width: 2, dash: 'dash' }
+            }
+            for (var i=0; i<100; i++) {
+                var ut = 3.0*i/100;
+                trace1.x[i] = ut;
+                trace1.y[i] = 0.75*(1-Math.exp(-4/3*ut));
+
+                trace2.x[i] = ut; trace2.y[i] = ut;
+            }
+
+            var data = [trace1, trace2];
+
+            var layout = {
+                showlegend: false,
+                xaxis: {
+                    title: "Genetic distance (d)"
+                },
+                yaxis: {
+                    title: "p-distance (p)",
+                    range: [0,1]
+                },
+                margin: {
+                    t:10
+                }
+            }
+
+            Plotly.newPlot('pdistOutput', data, layout, {displayModeBar: false});
+        </script>
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Continuous-time Markov chains (CTMCs)</h2>
+
+        <ul class="spaced" style="width:80%">
+            <li>CTMCs are the continuous-time generalization of Markov chains: state $X(t)$ is
+            a function of a continuous time parameter.</li>
+            <li>Obey the Chapman-Kolmogorov equation:
+                $$p(x_1,t_1|x_0,t_0)=\sum_{x_{1/2}}p(x_1,t_1|x_{1/2},t_{1/2})p(x_{1/2},t_{1/2}|x_0,t_0)$$
+                where $p(x_1,t_1)\equiv P(X(t_1)=x_1)$ and $t_0&lt;t_{1/2}&lt;t_1$.
+            </li>
+            <li>Can be written in the following differential form:
+                \begin{align*}
+                \frac{d}{dt}p(x,t|x_0,t_0)&amp;=\sum_{x'\neq x}\left[p(x',t|x_0,t_0)Q_{xx'}-p(x,t|x_0,_0)Q_{x'x}\right]\\
+                &amp;=\sum_{x'}Q_{x'x}p(x',t|x_0,t_0)
+                \end{align*}
+                defining $Q_{xx}=-\sum_{x'\neq x}Q_{x'x}$.
+            </li>
+            <li>This form is known as the Master Equation or Kolmogorov forward equation. Linear, so solution is "simply" $\vec{p}(t)=\exp[-Qt]\vec{p}(0)$.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>CTMC example</h2>
+
+        <p>Consider a system with two states (0 and 1) and a transition rate matrix
+        $$Q = \left[\begin{array}{cc}
+        - &amp; 2 \\
+        1 &amp; -
+        \end{array}\right]$$</p>
+
+        <p>Gives rise to the following trajectories:</p>
+
+        <div class="textbox">
+            <div class="title"><a href="#" style="color:white" id="ctmcRun">Run Demo</a></div>
+
+        <div id="ctmcOutput" style="width:100%;height:200px">
+        <script>
+            $("#ctmcRun").click(function (e) {
+                e.preventDefault();
+
+                console.log("Hello, world!");
+
+                var trace = {
+                    x: [0], y: [0],
+                    mode: 'lines',
+                    line: {shape: 'hv'}};
+
+                var t=0;
+                var i=0;
+                while (true) {
+                    if (trace.y[i]==0)
+                        a = 1;
+                    else
+                        a = 2;
+                    
+                    t += -Math.log(Math.random())/a;
+
+                    if (t>20)
+                        break;
+
+                    trace.x[i+1] = t;
+                    trace.y[i+1] = 1 - trace.y[i];
+
+                    i += 1;
+                }
+
+                trace.x[i+1] = 20;
+                trace.y[i+1] = trace.y[i];
+
+                var layout = {
+                    showlegend: false,
+
+                    xaxis: {
+                        title: "Time"
+                    },
+                    yaxis: {
+                        title: "State",
+                        range: [-0.1,1.1],
+                        zeroline: false,
+                        tickvals: [0,1]
+                    },
+                    margin: {
+                        t: 20
+                    }
+                }
+
+                console.log(trace);
+                
+                Plotly.purge("ctmcOutput");
+                Plotly.newPlot("ctmcOutput", [trace], layout, {displayModeBar: false});
+            });
+        </script>
+        </div>
+        </div>
+
+        <p>Time $\Delta t$ spent in state before transition:
+        $$ P(\Delta t|x) = \lambda e^{-\lambda \Delta t}$$
+        where $\lambda = \sum_{x'\neq x}Q_{x'x}$.</p>
+    </section>
+
+    <section>
+        <h2>Jukes-Cantor model of nucelotide substitution</h2>
+
+        <div style="width:100%">
+        <img data-src="JC.svg" style="width:30%;vertical-align:middle">
+        <div style="display:inline-block;width:50%">
+        $$
+        Q = \mu\left[\begin{array}{cccc}
+        -1 &amp; \frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3}\\
+        \frac{1}{3} &amp; -1 &amp; \frac{1}{3} &amp; \frac{1}{3}\\
+        \frac{1}{3} &amp; \frac{1}{3} &amp; -1 &amp; \frac{1}{3}\\
+        \frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3} &amp;-1
+        \end{array}\right]
+        $$
+        </div>
+        </div>
+
+        <div style="margin-top:2em">
+            \begin{align*}
+            P(X(t)=x|X(0)=x_0) &amp;= \left[\exp(-Qt)\right]_{xx_0}\\
+            &amp;=\left\{\begin{array}{ll}
+            \frac{1}{4}+\frac{3}{4}e^{-\frac{4}{3}\mu t} &amp; \text{for } x=x_0\\
+            \frac{1}{4}-\frac{1}{4}e^{-\frac{4}{3}\mu t} &amp; \text{for } x\neq x_0
+            \end{array}\right.
+            \end{align*}
+        </div>
+    </section>
+
+    <section>
+        <h2>Differences per site</h2>
+        <div id="diffOutput" style="width:1000px;height:600px;margin-top:2em">
+        <script>
+
+            var trace1 = { x: [], y: [],
+                mode: 'lines',
+                name: '',
+                line: {
+                    width: 4,
+                    dash: 'solid'
+                }
+            };
+
+            var trace2 = {x: [], y: [], mode: 'lines', name: '',
+                line: { width: 2, dash: 'dash' }
+            }
+
+            var trace3 = {x: [], y: [], mode: 'lines', name: '',
+                line: { width: 2, dash: 'dash' }
+            }
+
+            for (var i=0; i<100; i++) {
+                var ut = 2.0*i/100;
+                trace1.x[i] = ut;
+                trace1.y[i] = 0.75*(1-Math.exp(-4/3*ut));
+
+                trace2.x[i] = ut; trace2.y[i] = ut;
+                trace3.x[i] = ut; trace3.y[i] = 0.75;
+            }
+
+            var data = [trace1, trace2, trace3];
+
+            var layout = {
+                showlegend: false,
+                xaxis: {
+                    title: "Expected number of mutations"
+                },
+                yaxis: {
+                    title: "Expected number of differences",
+                    range: [0,1]
+                },
+                margin: {
+                    t:10
+                }
+            }
+
+            Plotly.newPlot('diffOutput', data, layout, {displayModeBar: false});
+        </script>
+        </div>
+    </section>
+
+    <section>
+        <h2>Genetic distance under Jukes-Cantor</h2>
+
+        <p>The probabilty that a site is distinct after time $t$ is
+        \begin{align*}
+        p_{\text{diff}}&amp;=\sum_{x'\neq x} P(X(t)=x'|X(0)=x)\\
+        &amp;=\frac{3}{4} - \frac{3}{4}e^{-\frac{4}{3}\mu t}
+        \end{align*}
+        </p>
+
+        <p>Equating $p_{\text{diff}}$ with the
+        $p$-distance and solving for $\mu t$ yields
+        $$\hat{d} = \widehat{\mu t} = -\frac{3}{4}\log(1-\frac{4}{3}p).$$
+        </p>
+
+        <div style="width:100%">
+            <div style="display:inline-block;width:50%;vertical-align:middle">
+                <ul>
+                    <li>Accounts for multiple, parallel, back-substitutions.</li>
+                    <li>Only correct if $p$ is exact: infinite sequences.</li>
+                    <li>Diverges if $p&geq;3/4$.</li>
+                </ul>
+            </div>
+            <div style="display:inline-block;width:450px;height:300px;vertical-align:middle" id="distancePlot">
+                <script>
+            var trace = { x: [], y: [], mode: "lines"};
+
+            for (var i=0; i<100; i++) {
+                var p = 0.7*i/100;
+                var d = -0.75*Math.log(1-4/3*p);
+                trace.x[i] = p;
+                trace.y[i] = d;
+            }
+
+            var layout = {
+                showlegend: false, width:450, height:250,
+                xaxis: {
+                    title: "p-distance"
+                },
+                yaxis: {
+                    title: "Genetic distance (Jukes-Cantor)",
+                },
+                margin: {
+                                 t:10,
+                                 b:30
+                }
+            }
+
+            Plotly.newPlot('distancePlot', [trace], layout, {displayModeBar: false});
+            </script>
+            </div>
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Other CTMC substitution models: Kimura 80</h2>
+
+        <div style="width:100%">
+        <img data-src="K80.svg" style="width:30%;vertical-align:middle">
+        <div style="display:inline-block;width:50%">
+        $$
+        Q = \left[\begin{array}{cccc}
+        \cdot &amp; \alpha &amp; \beta &amp; \beta \\
+        \alpha &amp; \cdot &amp; \beta &amp; \beta \\
+        \beta &amp; \beta &amp; \cdot &amp; \alpha \\
+        \beta &amp; \beta &amp; \alpha &amp;\cdot
+        \end{array}\right]
+        $$
+        </div>
+        </div>
+
+        <ul style="margin-top:2em">
+            <li>Also "Kimura two parameter" model.</li>
+            <li>Allows different rates for transitions and transversions.</li>
+            <li>Equilibrium base frequencies equal.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Other CTMC substitution models: HKY</h2>
+
+        <div style="width:100%">
+        <img data-src="HKY.svg" style="width:30%;vertical-align:middle">
+        <div style="display:inline-block;width:50%">
+        $$
+        Q = \left[\begin{array}{cccc}
+        \cdot &amp; \alpha\pi_G &amp; \beta\pi_G &amp; \beta\pi_G \\
+        \alpha\pi_A &amp; \cdot &amp; \beta\pi_A &amp; \beta\pi_A \\
+        \beta\pi_C &amp; \beta\pi_C &amp; \cdot &amp; \alpha\pi_C \\
+        \beta\pi_T &amp; \beta\pi_T &amp; \alpha\pi_T &amp;\cdot
+        \end{array}\right]
+        $$
+        </div>
+        </div>
+
+        <ul style="margin-top:2em">
+            <li>Due to Hasegawa, Kishino, Yano (1985).</li>
+            <li>Allows different transition transversion rates.</li>
+            <li>Allows equilibrium base frequencies to differ.</li>
+            <li>Most complex model for which analytical solutions are available.</li>
+        </li>
+    </section>
+
+    <section>
+        <h2>Other CTMC substitution models: GTR</h2>
+
+        <div style="width:100%">
+        <img data-src="GTR.svg" style="width:30%;vertical-align:middle">
+        <div style="display:inline-block;width:50%">
+        $$
+        Q = \left[\begin{array}{cccc}
+        \cdot &amp; \alpha\pi_G &amp; \beta\pi_G &amp; \gamma\pi_G \\
+        \alpha\pi_A &amp; \cdot &amp; \delta\pi_A &amp; \epsilon\pi_A \\
+        \beta\pi_C &amp; \delta\pi_C &amp; \cdot &amp; \eta\pi_C \\
+        \gamma\pi_T &amp; \epsilon\pi_T &amp; \eta\pi_T &amp;\cdot
+        \end{array}\right]
+        $$
+        </div>
+        </div>
+
+        <ul style="margin-top:2em">
+            <li>All models so-far have been reversible.</li>
+            <li>GTR is the most general time-reversible model.</li>
+            <li>Reversibility is a mathematical convenience: no biological reason!</li>
+            <li>No useful analytical solution available (matrix exponential doesn't count).</li>
+        </li>
+    </section>
+
+    <section>
+        <h2>Variable rates among sites</h2>
+
+        <div style="width:100%">
+            <div style="width:50%;display:inline-block;vertical-align:middle">
+                <p>Gamma distribution rate heterogeneity allows for variation
+                in evolutionary rate among sites according to
+                $$f(r) = \frac{\alpha^{\alpha}}{\Gamma(\alpha)}r^{\alpha-1}e^{-\alpha r}$$</p>
+            </div>
+            <div style="width:400px;height:300px;display:inline-block;vertical-align:middle" id="gammaDistribs">
+            <script>
+
+            function getTrace(alpha) {
+                var trace = { x: [], y: [], mode: "lines", name: "alpha=" + alpha };
+
+                for (var i=0; i<100; i++) {
+                    var r = 3*i/100;
+                    var f = Math.pow(alpha,alpha)*Math.pow(r, alpha-1)*Math.exp(-alpha*r)/Gamma(alpha);
+                    trace.x[i] = r;
+                    trace.y[i] = f;
+                }
+
+                return trace;
+            }
+
+            var layout = {
+                showlegend: true,
+                xaxis: {
+                    title: "Rate"
+                },
+                yaxis: {
+                    title: "Site fraction",
+                },
+                margin: {
+                    t:10,
+                }
+            }
+
+            Plotly.newPlot('gammaDistribs',
+                    [getTrace(20),
+                    getTrace(5),
+                    getTrace(1),
+                    getTrace(0.5),
+                    getTrace(0.1)],
+                    layout, {displayModeBar: false, staticPlot: true});
+            </script>
+        </div>
+
+        <div style="width:100%">
+            <div style="width:50%;display:inline-block;vertical-align:middle">
+                <p>Analytical solution exists for JC distance with site rate heterogeneity:
+                $$\hat{d}=-\frac{3}{4}\alpha\left[1-\left(1-\frac{4}{3}p\right)^{-1/\alpha}\right]$$
+            </div>
+            <div style="width:400px;height:300px; display:inline-block;vertical-align:middle" id="variableSiteD">
+            <script>
+                    var trace1 = { x: [], y: [], mode: "lines", name: "alpha=1"};
+                    var traceInf = { x: [], y: [], mode: "lines", name: "alpha=Inf"};
+
+                    for (var i=0; i<100; i++) {
+                        var p = 0.5*i/100;
+                        var d1 = 0.75*(Math.pow((1-4/3*p), -1)-1);
+                        var dInf = -0.75*Math.log(1-4/3*p);
+                        trace1.x[i] = p;
+                        traceInf.x[i] = p;
+                        trace1.y[i] = d1;
+                        traceInf.y[i] = dInf;
+                    }
+
+            var layout = {
+                showlegend: true,
+                xaxis: {
+                    title: "p-distance"
+                },
+                yaxis: {
+                    title: "Genetic distance",
+                },
+                margin: {
+                    t:10,
+                }
+            }
+
+            Plotly.newPlot('variableSiteD',
+                    [trace1, traceInf],
+                    layout, {displayModeBar: false, staticPlot: false});
+
+            </script>
+            </div>
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Genetic distance variation between models</h2>
+
+        <ul class="spaced" style="margin-top:2em">
+            <li>HIV-1B vs HIV-O/SIVcpz/HIV-1C: <i>env</i> gene:
+                <table>
+                    <tr> <td></td> <th>$p$-distance</th> <th>JC69</th> <th>K80</th> <th>Tajima-Nei</th></tr>
+                    <tr> <th>HIV-O</th> <td>0.391</td> <td>0.552</td> <td>0.560</td> <td>0.572</td></tr>
+                    <tr> <th>SIVcpz</th> <td>0.266</td> <td>0.337</td> <td>0.340</td> <td>0.427</td></tr>
+                    <tr> <th>HIV-1C</th> <td>0.163</td> <td>0.184</td> <td>0.187</td> <td>0.189</td></tr>
+                </table>
+            </li>
+
+            <li>HIV-1B vs HIV-O/HIV-1C: <i>pol</i> gene:
+                <table>
+                    <tr> <td></td> <th>$p$-distance</th> <th>JC69</th> <th>K80</th> <th>Tajima-Nei</th></tr>
+                    <tr> <th>HIV-O</th> <td>0.257</td> <td>0.315</td> <td>0.318</td> <td>0.324</td></tr>
+                    <tr> <th>HIV-1C</th> <td>0.103</td> <td>0.111</td> <td>0.113</td> <td>0.114</td></tr>
+                </table>
+            </li>
+    </section>
+
+<section>
+    <h2>Least-squares Phylogenetic Inference</h2>
+
+    <div>
+        <div style="display:inline-block;width:55%;vertical-align:middle">
+            <ul>
+                <li>Can use genetic distance as the basis for least-squares-based phylogenetic inference.</li>
+                <li>Define cost of tree as the (weighted) sum of the squares of the
+                difference between the genetic distance on the tree and the
+                distance estimated from the sequence alignment:
+                $$C(T) = \sum_i\sum_j w_{ij}(d_{ij}(T)-\hat{d}_{ij})^2$$ </li>
+                <li>Search for tree $T$ with lowest $C(T)$.</li>
+            </ul>
+        </div>
+        <div style="display:inline-block;width:35%;vertical-align:middle">
+            <img data-src="lsq.svg" style="width:100%">
+        </div>
+    </div>
+
+    <p>Comments:
+    <ul style="margin-top:-0.5em">
+        <li>Ignores correlations due to shared ancestry.</li>
+        <li>Consistent estimator: converges to truth in the limit of infinitely long alignment.</li>
+    </ul></p>
+</section>
+
+  <section>
     <h2>The Phylogenetic Likelihood</h2>
 
     <blockquote style="font-size:2em;">
@@ -24,11 +568,89 @@ layout: lecture
         generalizations to multiple alignments that share a tree, or to phylogenetic networks that allow
         different sites to evolve under distinct "local" trees.</li>
     </ul>
-
-    <p><i>We're Bayesians: we need a probability distribution for $T$!</i></p>
   </section>
 
-  <section>
+
+<section>
+    <h2> What is the likelihood of a tree?</h2>
+    <img data-src="treeLikelihood.svg" style="width:40%">
+
+    <ul>
+        <li>$$L(T|A)\equiv P(A|T) = \sum_x\sum_w P(x)P(A|x)P(w|x)P(G|w)P(G|w)$$</li>
+        <li>For $n$ taxa there are $4^{n-1}$ possible internal node states!</li>
+        <li>Solve using Dynamic Programming!</li>
+    </li>
+</section>
+
+<section>
+    <h2> Felsenstein's Pruning Algorithm</h2>
+    <div>
+        <div style="width:50%;display:inline-block;vertical-align:middle">
+            <ul>
+                <li>Introduced by Joseph Felsenstein, 1973.</li>
+                <li>Recursion based on the conditional likelihood of a subtree below node $k$ having state $s$: $L_k(s)$.</li>
+                <li>For leaves, $L_k(s)=\delta_{s,l}$ where $l$ is the leaf state.</li>
+            </ul>
+        </div>
+        <div style="width:45%;display:inline-block;vertical-align:middle">
+            <img data-src="treeLikelihood.svg" style="width:60%">
+        </div>
+
+        <p> For internal nodes,
+        $$L_k(s) = \left(\sum_xP(x|s)L_{c_l}(x)\right)\left(\sum_yP(y|s)L_{c_r}(y)\right)$$</p>
+
+        <blockquote>
+            Time complexity for $m$ sites: $m(n-1)4^2$.  This is the workhorse of computational phylogenetics.
+        </blockquote>
+    </div>
+</section>
+
+<section>
+    <h2>Maximum likelihood for Phylogenetics</h2>
+
+    <ul class="spaced" style="margin-top:10%">
+        <li>PhyML (Guindon and Gascuel, 2003)
+            <ul>
+                <li>Hill-climbing algorithm which attempts to find ML trees.</li>
+            </ul>
+        </li>
+        <li>RAxML (e.g. Stamatakis, 2005)
+            <ul>
+                <li>Another hill-climbing algorithm, optimized for large trees.</li>
+            </ul>
+        </li>
+        <li>FastTree (Price, Dehal, Arkin, 2009)
+            <ul>
+                <li>Uses efficient Neighbour-Joining algorithm to find starting tree.</li>
+                <li>Updates tree using heuristics based on tree length.</li>
+                <li>Inference from alignments of $&gt;10^5$ sequences feasible.</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2>Problems with ML</h2>
+
+    <ul class="spaced" style="margin-top:10%">
+        <li>Only ever gives point estimates: no indication of uncertainty.
+            <ul>
+                <li>Addressed using more <i>ad hoc</i>ery: bootstrap algorithms.</li>
+            </ul>
+        </li>
+
+        <li>Lacks rigorous theoretical basis: $L(\theta|D)$ is not a probability!</li>
+
+        <li>No clear way of incorporating additional (prior?) information into the analysis.</li>
+    </ul>
+
+    <blockquote style="margin-top:2em">
+        Need a better approach!
+    </blockquote>
+
+</section>
+
+<section>
     <h2>The Phylogenetic Posterior</h2>
 
     <blockquote style="margin-top:10%;font-size:1em">
@@ -293,6 +915,462 @@ layout: lecture
   </div>
 </section>
 
+</section>
+
+<section>
+  <section class="center">
+    <h1>Bayesian inference of bacterial recombination graphs</h1>
+  </section>
+
+<section>
+    <h2>Why study bacterial phylogenetics?</h2>
+
+    <div style="float:left; width:700px">
+        <ul>
+            <li class="fragment" data-fragment-index="1">Bacteria play important roles (both positive and
+                negative) in the health of animals and
+                plants.</li>
+            <li class="fragment" data-fragment-index="2">Many bacteria possess interesting and
+                <i>experimentally accessible</i> evolutionary
+                dynamics.</li>
+            <li class="fragment" data-fragment-index="3">Bacterial genomes are measurably evolving over
+                relatively short study periods.
+                <div class="figure" style="width:500px; position: relative; left: 100px">
+                    <img data-src="MEP_cropped.png">
+                    <div class="cite">Drummond &amp; Rambaut, TIEE (2003)</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div style="float:right; width:250px">
+        <div class="figure fragment" data-fragment-index="1">
+            <img data-src="EColiGut_Psa_collage.jpg">
+        </div>
+        <div class="figure fragment" data-fragment-index="2">
+            <img data-src="adaptive_radiation.jpg">
+            <div class="cite">Rainey &amp; Travisano, Nature (1998)</div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Cartoon bacterial population genetics</h2>
+
+    <div style="position: relative; top:0; left:0; width:1000px; height:400px">
+        <img data-src="binary_fission_7.svg" class="fragment current-visible" data-fragment-index="1"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none">
+        <img data-src="binary_fission_6.svg" class="fragment" data-fragment-index="2"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none">
+        <img data-src="binary_fission_5.svg" class="fragment" data-fragment-index="3"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none">
+        <img data-src="binary_fission_4.svg" class="fragment" data-fragment-index="4"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none">
+        <img data-src="binary_fission_3.svg" class="fragment" data-fragment-index="5"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none">
+        <img data-src="binary_fission_2.svg" class="fragment" data-fragment-index="6"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none">
+        <img data-src="binary_fission_1.svg" class="fragment" data-fragment-index="7"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none">
+    </div>
+
+    <img data-src="transduction_cropped.jpg" class="fragment" data-fragment-index="5"
+                                                              style="position:absolute; top:100px; left:0px; height:250px;">
+
+    <img data-src="conjugation.jpg" class="fragment" data-fragment-index="7"
+                                                     style="position:absolute; top:100px; right:0px; height:250px;">
+    <ul>
+        <li class="fragment">Effect of events can be plasmid transfer, insertion or homologous recombination.</li>
+        <li class="fragment">Rate of recombination varies and is subject to selection.</li>
+        <li class="fragment">Focus on homologous recombination: only event which doesn't alter the length of the sequence</li>
+    </ul>
+</section>
+
+<section>
+    <h2>The Problem for Phylogenetic Inference</h2>
+
+    <p>For many bacteria, the ratio between the recombination rate and the mutation rate is extremely high.</p>
+
+    <div class="figure fragment">
+        <img data-src="r2mhist.svg" style="width:800px">
+        <div class="cite">Vos and Didelot, The ISME Journal (2009)</div>
+    </div>
+</section>
+
+<section>
+    <h2>Existing solutions</h2>
+
+    <ul>
+        <li class="fragment">Pre-processing of data to identify and remove
+            non-vertically inherited material. (eg. START: <a class="cite" href="">Jolley et al., 2001</a>)
+
+            <table style="width:800px">
+                <tr><th style="width:400px">Pros</th> <th>Cons</th></tr>
+                <tr>
+                    <td>
+                        <ul>
+                            <li class="fragment">Can use standard tools for
+                                phylogenetic inference.</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li class="fragment">Data is being thrown away.</li>
+                            <li class="fragment">Ad hoc, may bias results.</li>
+                        </ul>
+                    </td>
+                </tr>
+
+            </table>
+        </li>
+
+        <li class="fragment" style="margin-top:20px">Explicit modelling of bacterial recombination.<br>
+            (eg. ClonalFrame and ClonalOrigin: <a class="cite" href="">Didelot et al., 2007</a>, <a class="cite" href="">2010</a>)
+
+            <table style="width:800px">
+                <tr><th style="width:400px">Pros</th> <th>Cons</th></tr>
+                <tr>
+                    <td>
+                        <ul>
+                            <li class="fragment">Can make use of all data.</li>
+                            <li class="fragment">Can infer additional parameters such as recombination rates.</li>
+                            <li class="fragment">May yield increased confidence in estimates.</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li class="fragment">Models can be complex, with many parameters.</li>
+                            <li class="fragment">Both computationally and statistically challenging.</li>
+                            <li class="fragment">Existing implementations lack flexibility.</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </li>
+    </ul>
+
+</section>
+
+<section>
+    <h2>The Coalescent with Gene Conversion</h2>
+
+    <div style="position: relative; top:0; left:0; width:1000px; height:500px;">
+        <img data-src="WrightFisherGC1.svg"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="WrightFisherGC2.svg" class="fragment"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="WrightFisherGC3.svg" class="fragment"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="WrightFisherGC3b.svg" class="fragment"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="WrightFisherGC4b.svg" class="fragment"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="WrightFisherGC5b.svg" class="fragment"
+            style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+    </div>
+    <a class="cite" href="">Wiuf, 1999</a>; <a class="cite" href="">Wiuf and Hein, 2000</a>
+
+    <div class="fragment" style="position:absolute; top:100px;left:-1em; width:350px">
+        <table class="params" style="font-size:0.8em">
+            <tr><th colspan="2">Parameters</th></tr>
+            <tr> <td>$N(t)g$</td> <td>Coalescence rate</td> </tr>
+            <tr> <td>$\rho_s$</td> <td>Recombination rate</td> </tr>
+            <tr> <td>$\delta$</td> <td>Expected tract length</td> </tr>
+        </table>
+    </div>
+</section>
+
+<section class="center">
+    <div class="textbox alert">
+        <div class="title">Problem</div>
+        The space of possible ancestral recombination graphs is extremely
+        large. Even two samples have infinitely many distinct ancestries!
+    </div>
+</section>
+
+<section>
+    <h2>Full ARG</h2>
+
+    <img data-src="full_arg.svg" style="box-shadow:none;width:500px">
+
+    <br>
+    &nbsp;
+</section>
+
+<section>
+    <h2>Approximation 1: ClonalFrame</h2>
+
+    <img data-src="CF_arg.svg" style="box-shadow:none;width:500px">
+
+    <br>
+
+    <a class="cite" href="">Didelot et al., 2007 (ClonalFrame)</a>;
+    <a class="cite" href="">Didelot and Wilson, 2015 (ClonalFrameML)</a>
+</section>
+
+<section>
+    <h2>Approximation 2: ClonalOrigin</h2>
+
+    <img data-src="CO_arg.svg" style="box-shadow:none;width:500px">
+
+    <br>
+
+    <a class="cite" href="">Didelot et al., 2010 (ClonalOrigin)</a>;
+    <a class="cite" href="">Ansari and Didelot, 2014 (ClonalOrigin')</a>
+</section>
+
+<section class="center">
+    <div class="textbox" style="width:600px;position:relative;left:200px">
+        <div class="title">Our Goal</div>
+        To conduct Bayesian inference of the full ARG under the ClonalOrigin
+        model, optionally under non-trivial population size dynamics.
+    </div>
+</section>
+
+
+<section>
+    <h2>Inference under the ClonalOrigin Model</h2>
+
+    <p> Inference follows the standard Bayesian phylogenetic tradition: </p>
+
+    \begin{equation*}
+        f(G,N,\mu,\rho,\delta|A) \propto P_{F}(A|G,\mu)f_{CGC}(G|N,\rho,\delta)f_{\text{prior}}(N
+,\mu,\rho,\delta)
+    \end{equation*}
+
+    <p>where</p>
+
+    <ul>
+        <li>$A$ is the sequence alignment,</li>
+        <li>$\mu$ are the substitution model parameters, and</li>
+        <li>$G$ is the full sample genealogy including clonal frame<br>
+            $T$ and $M$ conversions $\{C_i\}_{i\in[1\ldots M]}$.</li>
+    </ul>
+
+    <div class="fragment">
+    <p>The genealogy density under ClonalOrigin model can be expanded</p>
+    \begin{equation*}
+        f_{CGC}(G|\rho',\delta,N)=\left(\prod_{i=1}^M f(C_i|T,N,\delta)\right)P(M|T,\rho)f_C(T|N)
+    \end{equation*}
+    </div>
+</section>
+
+<section>
+    <h2>Identifiability</h2>
+
+    <p>Despite using a simplified model, an infinite number of ARGs still
+    possess the same likelihood given a sequence alignment.</p>
+
+    <img class="fragment" data-src="identifiability.svg" style="box-shadow:none;width:800px">
+
+    <blockquote class="fragment">
+        Very important for an MCMC algorithm to propose state changes which minimize effect on likelihood.
+    </blockquote>
+</section>
+
+<section>
+    <h2>MCMC State Proposal Strategy</h2>
+
+    <div style="position: relative; top:0; left:0; width:1000px; height:500px;">
+        <img data-src="collapse_expand4.svg"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="collapse_expand3.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="collapse_expand2.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="collapse_expand1.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+    </div>
+
+    <ul>
+        <li class="fragment">Attachment points and site tracts of new conversions drawn from prior.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Validation 1: Sampling from the prior</h2>
+
+    <ul>
+        <li> It is trivial to sample directly from the approximate ARG prior
+            via coalescent simulation.</li>
+        <li class="fragment"> We expect precise agreement between our MCMC algorithm and the
+            coalescent simulation when no data is involved.</li>
+    </ul>
+
+    <div class="fragment">
+        <img data-src="validate_CFheight.svg" style="box-shadow:none">
+        <img data-src="validate_meanEdgeLength.svg" style="box-shadow:none">
+        <img data-src="validate_meanTractLength.svg" style="box-shadow:none">
+    </div>
+
+    <blockquote class="alert fragment">
+        One should alwayas test that a new sampler exactly converges to a known
+        distribution: this provides a strict necessary criterion for
+        correctness.
+    </blockquote>
+</section>
+
+<section>
+    <h2>Validation 2: Inference from simulated data</h2>
+
+    <img data-src="posterior_rho.svg" style="box-shadow:none; padding:0; margin:0">
+    <img data-src="posterior_delta.svg" style="box-shadow:none;padding:0;margin:0">
+    <img data-src="posterior_theta.svg" style="box-shadow:none;padding:0;margin:0">
+</section>
+
+<section>
+    <p style="margin:0px">True ARG:</p>
+    <img data-src="true_tree.svg" style="box-shadow:none; padding:0; margin:0; width:800px">
+
+    <div class="fragment">
+        <p style="margin:0px">Randomly-selected ARG from MCMC:</p>
+        <img data-src="sampled_tree.svg" style="box-shadow:none; padding:0; margin:0; width:800px">
+    </div>
+</section>
+
+<section>
+    <h2>Summary networks</h2>
+
+    <div style="position: relative; top:0; left:0; width:1000px; height:500px;">
+        <img data-src="summarizing6.svg"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="summarizing5.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="summarizing3.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="summarizing2.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="summarizing1.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+        <img data-src="summarizing0.svg" class="fragment"
+             style="position:absolute; top:0; left:0; width:1000px; box-shadow:none; background-color:white;">
+    </div>
+</section>
+
+<section>
+    <p style="margin:0px">True ARG:</p>
+    <img data-src="true_tree.svg" style="box-shadow:none; padding:0; margin:0; width:800px">
+
+    <div class="fragment">
+        <p style="margin:0px">Summary ARG from MCMC:</p>
+        <img data-src="summary_tree.svg" style="box-shadow:none; padding:0; margin:0; width:800px">
+    </div>
+</section>
+
+<section>
+    <h2>Application to <i>Escherichia coli</i></h2>
+
+    <ul>
+        <li>Applied method to <i>E. coli</i> O157/O26 sequences collected by Tessy George (<sup>m</sup>EpiLab, Massey University, New Zealand).</li>
+        <li>Sequences for 53 rMLST genes (21.1 kb total) from each of 23 human and cattle-derived isolates.</li>
+        <li>Analyzed using fixed expected tract length parameter and informative prior on conversion rate parameter.</li>
+    </ul>
+
+    <img data-src="Tessy_rMLST_splitstree.svg" style="width:900px;box-shadow:none">
+</section>
+
+<section>
+    <h2>Application to <i>Escherichia coli</i></h2>
+
+    <div style="position: relative; top:0; left:0; width:1000px; height:600px;">
+        <img data-src="Tessy_new_summary2.svg" style="position:absolute;top:0;left:0;width:1000px;box-shadow:none;background-color:white">
+        <img class="fragment" data-src="Tessy_new_summary2_compare.svg" style="position:absolute;top:0;left:0;width:1000px;box-shadow:none;background-color:white">
+        <img class="fragment" data-src="gene_flow.svg" style="position:absolute;top:0;left:0;width:250px;background-color:white;padding:20px">
+    </div>
+</section>
+
+<section>
+    <h2>Software implementation</h2>
+
+    <img data-src="bacter_logo.svg" style="width:500px;box-shadow:none">
+
+    <br>
+
+    <a href="http://tgvaughan.github.io/bacter">tgvaughan.github.io/bacter</a>
+
+    <br>
+    <br>
+
+    <ul>
+        <li class="fragment">BEAST 2 package that performs inference under the ClonalOrigin model.</li>
+        <li class="fragment">Joint inference of the clonal frame, recombinant edges and parameters.</li>
+        <li class="fragment">Can be combined with usual variety of substitution models, parametric population models and parameter priors.</li>
+        <li class="fragment">GUI analysis configuration via BEAUti.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Recombination and Demographic Inference</h2>
+
+    <br>
+    <br>
+
+    <img data-src="conversion_alignment.png" style="width:800px">
+
+    <ul>
+        <li class="fragment">Relationship used by
+            <a class="cite" href="http://dx.doi.org/10.1038/nature10231">Li and Durbin, 2011</a>
+            to infer human demographic history from pairs of autosomes.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Bayesian Skyline Plots in Bacter</h2>
+
+    <img data-src="skyline_icon.svg" style="box-shadow:none;width:400px">
+
+    <ul>
+        <li class="fragment">Bacter implements a non-parametric demographic history model inspired by the standard Bayesian Skyline Plot <a href="https://doi.org/10.1093/molbev/msi103">(Drummond et al., 2005)</a>.</li>
+        <li class="fragment">In principle can reconstruct non-trivial dynamics from very few genomes.</li>
+        <li class="fragment">In practice, this is limited by the computational expense of the algorithm.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Piecewise constant/linear population model</h2>
+
+    <div style="position: relative; top:0; left:0; width:1000px; height:600px;">
+        <img data-src="skyline_diagram.svg" style="position:absolute;left:0;top:0;width:1000px;box-shadow:none">
+        <img class="fragment" data-src="skyline_linear_diagram.svg" style="position:absolute;left:0;top:0;width:1000px;box-shadow:none;background-color:white">
+    </div>
+</section>
+
+<section>
+    <h2>Inference example</h2>
+
+    <img data-src="skyline_tree.svg" style="width:700px;box-shadow:none;margin:0">
+
+
+    <img class="fragment" data-src="popfun_inf.svg" style="width:800px;margin-top:0">
+</section>
+
+<section>
+     <h2>Bacter limitations</h2>
+
+     <div style="float:left;width:600px">
+     <ul>
+         <li class="fragment">Computational complexity scales with the number of proposed conversions.
+             <ul>
+                 <li class="fragment">This can be arbitrarily large, even for small sample sets.</li>
+                 <li class="fragment">Cannot use the BEAGLE phylogenetic likelihood library to speed things up due
+                     to peculiarities of ARG likelihood computation.</li>
+             </ul>
+         </li>
+         <li class="fragment">MCMC algorithm used does not intelligently locate conversions.
+             <ul>
+                 <li class="fragment">Looking at addressing this in the near future.</li>
+             </ul>
+         </li>
+         <li class="fragment">Network summary algorithm can produce peculiar results.
+             <ul>
+                 <li>More research needs to be done to find a better algorithm.</li>
+             </ul>
+         </li>
+     </ul>
+     </div>
+     <div style="float:right">
+         <img data-src="ointment.svg" style="width:300px;box-shadow:none;"/>
+     </div>
+</section>
 </section>
 
 
