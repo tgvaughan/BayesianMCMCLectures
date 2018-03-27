@@ -57,7 +57,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="347.18284"
+     inkscape:cx="166.36553"
      inkscape:cy="-37.81638"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -82,7 +82,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -145,9 +145,9 @@
          id="tspan1147"
          x="117.59859"
          y="32.135899"
-         style="stroke-width:0.26458332px">P(M<tspan
+         style="stroke-width:0.26458332px">P(d|M<tspan
    style="font-size:64.99999762%;baseline-shift:sub"
-   id="tspan1151">2</tspan>|d)</tspan></text>
+   id="tspan1151">2</tspan>)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:7.05555534px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -158,9 +158,9 @@
          id="tspan1147-9"
          x="105.00256"
          y="11.816324"
-         style="stroke-width:0.26458332px">P(M<tspan
+         style="stroke-width:0.26458332px">P(d|M<tspan
    style="font-size:4.58611059px;baseline-shift:sub;stroke-width:0.26458332px"
-   id="tspan1151-3">1</tspan>|d)</tspan></text>
+   id="tspan1151-3">1</tspan>)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:7.05555534px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
